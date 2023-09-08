@@ -1,39 +1,59 @@
-<!--
-This README describes the package. If you publish this package to pub.dev,
-this README's contents appear on the landing page for your package.
-
-For information about how to write a good package README, see the guide for
-[writing package pages](https://dart.dev/guides/libraries/writing-package-pages).
-
-For general information about developing packages, see the Dart guide for
-[creating packages](https://dart.dev/guides/libraries/create-library-packages)
-and the Flutter guide for
-[developing packages and plugins](https://flutter.dev/developing-packages).
--->
-
-TODO: Put a short description of the package here that helps potential users
-know whether this package might be useful for them.
+# lindi_sticker_widget
 
 ## Features
 
-TODO: List what your package can do. Maybe include images, gifs, or videos.
+&nbsp; Rotate </br>
+&nbsp; Resize</br>
+&nbsp; Move</br>
+&nbsp; Layer Update (Change Stack position)</br>
+&nbsp; Delete
+<br>
+<br>
 
 ## Getting started
 
-TODO: List prerequisites and provide or point to information on how to
-start using the package.
+This plugin is available on Pub: [https://pub.dev/packages/lindi_sticker_widget](https://pub.dev/packages/lindi_sticker_widget)
+
+Add this to `dependencies` in your app's `pubspec.yaml`
+
+```yaml
+lindi_sticker_widget : latest_version
+```
 
 ## Usage
 
-TODO: Include short and useful examples for package users. Add longer examples
-to `/example` folder.
+Sample code to integrate can be found in [example/lib/main.dart](example/lib/main.dart).
+
+#### LindiController
 
 ```dart
-const like = 'sample';
+  LindiController controller = LindiController();
 ```
 
-## Additional information
+#### Integrate LindiStickerWidget
 
-TODO: Tell users more about the package: where to find more information, how to
-contribute to the package, how to file issues, what response they can expect
-from the package authors, and more.
+```dart
+LindiStickerWidget(
+    controller: controller,
+    child: Container(
+    color: Colors.yellow,
+    width: double.infinity,
+    height: 300,
+)
+```
+
+#### Save LindiStickerWidget as Uint8List
+
+```dart
+await controller.saveAsUint8List();
+```
+
+## Screenshot
+
+![Demo](https://raw.githubusercontent.com/majlindavdylaj/lindi_sticker_widget/tree/master/example/assets/Screenshot_1694168087.png)
+
+***
+
+### :heart:  Found this project useful?
+
+If you found this project useful, then please consider giving it a :star:  on Github and sharing it with your friends via social media.
