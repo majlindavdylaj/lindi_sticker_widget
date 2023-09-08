@@ -36,9 +36,9 @@ Sample code to integrate can be found in [example/lib/main.dart](example/lib/mai
 LindiStickerWidget(
     controller: controller,
     child: Container(
-    color: Colors.yellow,
-    width: double.infinity,
-    height: 300,
+        color: Colors.yellow,
+        width: double.infinity,
+        height: 300,
 )
 ```
 
@@ -50,7 +50,7 @@ await controller.saveAsUint8List();
 
 ## Screenshot
 
-![Demo](https://raw.githubusercontent.com/majlindavdylaj/lindi_sticker_widget/tree/master/example/assets/Screenshot_1694168087.png)
+![Demo](https://github.com//majlindavdylaj/lindi_sticker_widget/tree/master/example/assets/Screenshot_1694168087.png)
 
 ***
 
