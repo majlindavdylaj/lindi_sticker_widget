@@ -6,7 +6,8 @@
 &nbsp; Resize</br>
 &nbsp; Move</br>
 &nbsp; Layer Update (Change Stack position)</br>
-&nbsp; Delete
+&nbsp; Delete</br>
+&nbsp; Flip
 <br>
 <br>
 
