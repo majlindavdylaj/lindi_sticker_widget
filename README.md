@@ -50,7 +50,7 @@ await controller.saveAsUint8List();
 
 ## Screenshot
 
-![Demo](https://github.com//majlindavdylaj/lindi_sticker_widget/tree/master/example/assets/Screenshot_1694168087.png)
+![Demo](/example/assets/Screenshot_1694168087.png)
 
 ***
 
