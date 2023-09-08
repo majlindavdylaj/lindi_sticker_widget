@@ -40,6 +40,7 @@ LindiStickerWidget(
         color: Colors.yellow,
         width: double.infinity,
         height: 300,
+  ),
 )
 ```
 
