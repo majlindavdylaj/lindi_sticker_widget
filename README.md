@@ -40,7 +40,7 @@ LindiStickerWidget(
         color: Colors.yellow,
         width: double.infinity,
         height: 300,
-  ),
+    ),
 )
 ```
 
@@ -55,7 +55,7 @@ controller.addWidget(
 #### Save LindiStickerWidget as Uint8List
 
 ```dart
-await controller.saveAsUint8List();
+Uint8List? image = await controller.saveAsUint8List();
 ```
 
 ## Screenshot

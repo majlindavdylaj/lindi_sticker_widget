@@ -63,18 +63,18 @@ class MatrixGestureDetector extends StatefulWidget {
 
   final VoidCallback onScaleStart;
 
-  const MatrixGestureDetector({
-    Key? key,
-    required this.onMatrixUpdate,
-    required this.child,
-    this.shouldTranslate = true,
-    this.shouldScale = true,
-    this.shouldRotate = true,
-    this.clipChild = true,
-    this.focalPointAlignment,
-    this.behavior = HitTestBehavior.deferToChild,
-    required this.onScaleStart
-  })  : super(key: key);
+  const MatrixGestureDetector(
+      {Key? key,
+      required this.onMatrixUpdate,
+      required this.child,
+      this.shouldTranslate = true,
+      this.shouldScale = true,
+      this.shouldRotate = true,
+      this.clipChild = true,
+      this.focalPointAlignment,
+      this.behavior = HitTestBehavior.deferToChild,
+      required this.onScaleStart})
+      : super(key: key);
 
   @override
   State<MatrixGestureDetector> createState() => _MatrixGestureDetectorState();
@@ -118,7 +118,7 @@ class _MatrixGestureDetectorState extends State<MatrixGestureDetector> {
   @override
   Widget build(BuildContext context) {
     Widget child =
-    widget.clipChild ? ClipRect(child: widget.child) : widget.child;
+        widget.clipChild ? ClipRect(child: widget.child) : widget.child;
     return GestureDetector(
       behavior: widget.behavior,
       onScaleStart: onScaleStart,
@@ -161,9 +161,9 @@ class _MatrixGestureDetectorState extends State<MatrixGestureDetector> {
     }
 
     final focalPointAlignment = widget.focalPointAlignment;
-    final focalPoint = focalPointAlignment == null ?
-    details.localFocalPoint :
-    focalPointAlignment.alongSize(context.size!);
+    final focalPoint = focalPointAlignment == null
+        ? details.localFocalPoint
+        : focalPointAlignment.alongSize(context.size!);
 
     // handle matrix scaling
     if (widget.shouldScale && details.scale != 1.0) {

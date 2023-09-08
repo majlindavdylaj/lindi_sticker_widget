@@ -1,4 +1,3 @@
-
 import 'dart:math';
 import 'dart:typed_data';
 
@@ -10,23 +9,22 @@ import 'dart:ui' as ui;
 import 'package:lindi_sticker_widget/lindi_sticker_widget.dart';
 
 class LindiController extends ChangeNotifier {
-
   List<DraggableWidget> widgets = [];
 
   Color _borderColor = Colors.blue;
   Color _iconColor = Colors.white;
 
-  set borderColor(Color color){
+  set borderColor(Color color) {
     _borderColor = color;
     notifyListeners();
   }
 
-  set iconColor(Color color){
+  set iconColor(Color color) {
     _iconColor = color;
     notifyListeners();
   }
 
-  addWidget(Widget widget){
+  addWidget(Widget widget) {
     Key key = Key('lindi-${DateTime.now().millisecondsSinceEpoch}-${_nrRnd()}');
     widgets.add(DraggableWidget(
         key: key,
@@ -41,19 +39,17 @@ class LindiController extends ChangeNotifier {
         onLayer: (key) {
           _layer(key);
         },
-        child: widget
-      )
-    );
+        child: widget));
     _border(key);
   }
 
-  clearAllBorders(){
+  clearAllBorders() {
     _border(const Key('-1'));
   }
 
-  _border(Key? key){
-    for(int i = 0; i < widgets.length; i++){
-      if(widgets[i].key == key) {
+  _border(Key? key) {
+    for (int i = 0; i < widgets.length; i++) {
+      if (widgets[i].key == key) {
         widgets[i].update(true);
       } else {
         widgets[i].update(false);
@@ -62,19 +58,20 @@ class LindiController extends ChangeNotifier {
     notifyListeners();
   }
 
-  _delete(key){
-    widgets.removeWhere((element){
+  _delete(key) {
+    widgets.removeWhere((element) {
       return element.key! == key;
     });
     notifyListeners();
   }
 
-  _layer(key){
-    DraggableWidget widget = widgets.firstWhere((element) => element.key == key);
+  _layer(key) {
+    DraggableWidget widget =
+        widgets.firstWhere((element) => element.key == key);
     int index = widgets.indexOf(widget);
-    if(index != 0){
+    if (index != 0) {
       widgets.remove(widget);
-      widgets.insert(index-1, widget);
+      widgets.insert(index - 1, widget);
       notifyListeners();
     }
   }
@@ -86,11 +83,12 @@ class LindiController extends ChangeNotifier {
       double pixelRatio = 2;
       await Future.delayed(const Duration(milliseconds: 700))
           .then((value) async {
-        RenderRepaintBoundary boundary = LindiStickerWidget.globalKey.currentContext
-            ?.findRenderObject() as RenderRepaintBoundary;
+        RenderRepaintBoundary boundary =
+            LindiStickerWidget.globalKey.currentContext?.findRenderObject()
+                as RenderRepaintBoundary;
         ui.Image image = await boundary.toImage(pixelRatio: pixelRatio);
         ByteData? byteData =
-        await image.toByteData(format: ui.ImageByteFormat.png);
+            await image.toByteData(format: ui.ImageByteFormat.png);
         pngBytes = byteData?.buffer.asUint8List();
       });
       return pngBytes;
@@ -99,12 +97,11 @@ class LindiController extends ChangeNotifier {
     }
   }
 
-  int _nrRnd(){
+  int _nrRnd() {
     Random rnd;
     int min = 1;
     int max = 100000;
     rnd = Random();
     return min + rnd.nextInt(max - min);
   }
-
 }

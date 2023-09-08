@@ -5,25 +5,19 @@ import 'package:lindi_sticker_widget/lindi_controller.dart';
 
 //ignore: must_be_immutable
 class LindiStickerWidget extends StatefulWidget {
-
   static GlobalKey globalKey = GlobalKey();
 
   LindiController controller;
   Widget child;
 
-  LindiStickerWidget({
-    Key? key,
-    required this.controller,
-    required this.child
-  }) : super(key: key);
+  LindiStickerWidget({Key? key, required this.controller, required this.child})
+      : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _LindiStickerWidgetState();
-
 }
 
 class _LindiStickerWidgetState extends State<LindiStickerWidget> {
-
   @override
   void initState() {
     widget.controller.addListener(() {
@@ -43,7 +37,7 @@ class _LindiStickerWidgetState extends State<LindiStickerWidget> {
           Positioned.fill(
             child: Stack(
               children: [
-                for(int i = 0; i < widget.controller.widgets.length; i++)
+                for (int i = 0; i < widget.controller.widgets.length; i++)
                   widget.controller.widgets[i]
               ],
             ),
@@ -53,4 +47,3 @@ class _LindiStickerWidgetState extends State<LindiStickerWidget> {
     );
   }
 }
-
