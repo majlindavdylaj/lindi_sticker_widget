@@ -3,7 +3,6 @@ library matrix_gesture_detector;
 import 'dart:math';
 
 import 'package:flutter/widgets.dart';
-import 'package:vector_math/vector_math_64.dart';
 
 typedef MatrixGestureDetectorCallback = void Function(
     Matrix4 matrix,
@@ -78,7 +77,7 @@ class MatrixGestureDetector extends StatefulWidget {
   })  : super(key: key);
 
   @override
-  _MatrixGestureDetectorState createState() => _MatrixGestureDetectorState();
+  State<MatrixGestureDetector> createState() => _MatrixGestureDetectorState();
 
   ///
   /// Compose the matrix from translation, scale and rotation matrices - you can
@@ -89,7 +88,7 @@ class MatrixGestureDetector extends StatefulWidget {
   ///
   static Matrix4 compose(Matrix4? matrix, Matrix4? translationMatrix,
       Matrix4? scaleMatrix, Matrix4? rotationMatrix) {
-    if (matrix == null) matrix = Matrix4.identity();
+    matrix ??= Matrix4.identity();
     if (translationMatrix != null) matrix = translationMatrix * matrix;
     if (scaleMatrix != null) matrix = scaleMatrix * matrix;
     if (rotationMatrix != null) matrix = rotationMatrix * matrix;

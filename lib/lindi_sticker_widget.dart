@@ -1,9 +1,9 @@
 library lindi_sticker_widget;
 
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:lindi_sticker_widget/lindi_controller.dart';
 
+//ignore: must_be_immutable
 class LindiStickerWidget extends StatefulWidget {
 
   static GlobalKey globalKey = GlobalKey();

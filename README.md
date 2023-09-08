@@ -43,6 +43,14 @@ LindiStickerWidget(
 )
 ```
 
+#### Add Widget to LindiStickerWidget
+
+```dart
+controller.addWidget(
+    Text('Hello World')
+);
+```
+
 #### Save LindiStickerWidget as Uint8List
 
 ```dart
