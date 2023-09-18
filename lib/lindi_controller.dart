@@ -11,16 +11,35 @@ import 'package:lindi_sticker_widget/lindi_sticker_widget.dart';
 class LindiController extends ChangeNotifier {
   List<DraggableWidget> widgets = [];
 
-  Color _borderColor = Colors.blue;
-  Color _iconColor = Colors.white;
+  Color borderColor;
+  Color iconColor;
+  bool showDone ;
+  bool showClose;
+  bool showFlip;
+  bool showStack;
+  bool showLock;
+  bool showAllBorders;
+  bool shouldMove;
+  bool shouldRotate;
+  bool shouldScale;
+  double minScale;
+  double maxScale;
 
-  set borderColor(Color color) {
-    _borderColor = color;
-    notifyListeners();
-  }
-
-  set iconColor(Color color) {
-    _iconColor = color;
+  LindiController({
+    this.borderColor = Colors.blue,
+    this.iconColor = Colors.white,
+    this.showDone = true,
+    this.showClose = true,
+    this.showFlip = true,
+    this.showStack = true,
+    this.showLock = true,
+    this.showAllBorders = true,
+    this.shouldMove = true,
+    this.shouldRotate = true,
+    this.shouldScale = true,
+    this.minScale = 0.5,
+    this.maxScale = 4
+  }){
     notifyListeners();
   }
 
@@ -28,8 +47,19 @@ class LindiController extends ChangeNotifier {
     Key key = Key('lindi-${DateTime.now().millisecondsSinceEpoch}-${_nrRnd()}');
     widgets.add(DraggableWidget(
         key: key,
-        borderColor: _borderColor,
-        iconColor: _iconColor,
+        borderColor: borderColor,
+        iconColor: iconColor,
+        showDone: showDone,
+        showClose: showClose,
+        showFlip: showFlip,
+        showStack: showStack,
+        showLock: showLock,
+        showAllBorders: showAllBorders,
+        shouldMove: shouldMove,
+        shouldRotate: shouldRotate,
+        shouldScale: shouldScale,
+        minScale: minScale,
+        maxScale: maxScale,
         onBorder: (key) {
           _border(key);
         },

@@ -1,10 +1,9 @@
-library matrix_gesture_detector;
-
 import 'dart:math';
 
 import 'package:flutter/widgets.dart';
 
 typedef MatrixGestureDetectorCallback = void Function(
+    double scale,
     Matrix4 matrix,
     Matrix4 translationDeltaMatrix,
     Matrix4 scaleDeltaMatrix,
@@ -62,6 +61,10 @@ class MatrixGestureDetector extends StatefulWidget {
   final Alignment? focalPointAlignment;
 
   final VoidCallback onScaleStart;
+  final VoidCallback onScaleEnd;
+
+  final double minScale;
+  final double maxScale;
 
   const MatrixGestureDetector(
       {Key? key,
@@ -73,11 +76,15 @@ class MatrixGestureDetector extends StatefulWidget {
       this.clipChild = true,
       this.focalPointAlignment,
       this.behavior = HitTestBehavior.deferToChild,
-      required this.onScaleStart})
+      required this.onScaleStart,
+      required this.onScaleEnd,
+      required this.minScale,
+      required this.maxScale
+      })
       : super(key: key);
 
   @override
-  State<MatrixGestureDetector> createState() => _MatrixGestureDetectorState();
+  State<MatrixGestureDetector> createState() => MatrixGestureDetectorState();
 
   ///
   /// Compose the matrix from translation, scale and rotation matrices - you can
@@ -109,33 +116,40 @@ class MatrixGestureDetector extends StatefulWidget {
   }
 }
 
-class _MatrixGestureDetectorState extends State<MatrixGestureDetector> {
+class MatrixGestureDetectorState extends State<MatrixGestureDetector> {
   Matrix4 translationDeltaMatrix = Matrix4.identity();
   Matrix4 scaleDeltaMatrix = Matrix4.identity();
   Matrix4 rotationDeltaMatrix = Matrix4.identity();
   Matrix4 matrix = Matrix4.identity();
 
+  double recordScale = 1;
+  double recordOldScale = 0;
+
   @override
   Widget build(BuildContext context) {
     Widget child =
-        widget.clipChild ? ClipRect(child: widget.child) : widget.child;
+      widget.clipChild ?
+      ClipRect(
+        child: widget.child
+      ) : widget.child;
     return GestureDetector(
       behavior: widget.behavior,
       onScaleStart: onScaleStart,
       onScaleUpdate: onScaleUpdate,
+      onScaleEnd: onScaleEnd,
       child: child,
     );
   }
 
-  _ValueUpdater<Offset> translationUpdater = _ValueUpdater(
+  ValueUpdater<Offset> translationUpdater = ValueUpdater(
     value: Offset.zero,
     onUpdate: (oldVal, newVal) => newVal - oldVal,
   );
-  _ValueUpdater<double> scaleUpdater = _ValueUpdater(
+  ValueUpdater<double> scaleUpdater = ValueUpdater(
     value: 1.0,
     onUpdate: (oldVal, newVal) => newVal / oldVal,
   );
-  _ValueUpdater<double> rotationUpdater = _ValueUpdater(
+  ValueUpdater<double> rotationUpdater = ValueUpdater(
     value: 0.0,
     onUpdate: (oldVal, newVal) => newVal - oldVal,
   );
@@ -143,12 +157,18 @@ class _MatrixGestureDetectorState extends State<MatrixGestureDetector> {
   void onScaleStart(ScaleStartDetails details) {
     widget.onScaleStart();
     translationUpdater.value = details.focalPoint;
+    recordOldScale = recordScale;
     scaleUpdater.value = 1.0;
     rotationUpdater.value = 0.0;
   }
 
+  void onScaleEnd(ScaleEndDetails details) {
+    widget.onScaleEnd();
+  }
+
   void onScaleUpdate(ScaleUpdateDetails details) {
     widget.onScaleStart();
+
     translationDeltaMatrix = Matrix4.identity();
     scaleDeltaMatrix = Matrix4.identity();
     rotationDeltaMatrix = Matrix4.identity();
@@ -167,9 +187,13 @@ class _MatrixGestureDetectorState extends State<MatrixGestureDetector> {
 
     // handle matrix scaling
     if (widget.shouldScale && details.scale != 1.0) {
-      double scaleDelta = scaleUpdater.update(details.scale);
-      scaleDeltaMatrix = _scale(scaleDelta, focalPoint);
-      matrix = scaleDeltaMatrix * matrix;
+      double sc = recordOldScale * details.scale;
+      if(sc > widget.minScale && sc < widget.maxScale) {
+        recordScale = sc;
+        double scaleDelta = scaleUpdater.update(details.scale);
+        scaleDeltaMatrix = _scale(scaleDelta, focalPoint);
+        matrix = scaleDeltaMatrix * matrix;
+      }
     }
 
     // handle matrix rotating
@@ -178,8 +202,7 @@ class _MatrixGestureDetectorState extends State<MatrixGestureDetector> {
       rotationDeltaMatrix = _rotate(rotationDelta, focalPoint);
       matrix = rotationDeltaMatrix * matrix;
     }
-
-    widget.onMatrixUpdate(
+    widget.onMatrixUpdate(recordScale,
         matrix, translationDeltaMatrix, scaleDeltaMatrix, rotationDeltaMatrix);
   }
 
@@ -227,13 +250,13 @@ class _MatrixGestureDetectorState extends State<MatrixGestureDetector> {
   }
 }
 
-typedef _OnUpdate<T> = T Function(T oldValue, T newValue);
+typedef OnUpdate<T> = T Function(T oldValue, T newValue);
 
-class _ValueUpdater<T> {
-  final _OnUpdate<T> onUpdate;
+class ValueUpdater<T> {
+  final OnUpdate<T> onUpdate;
   T value;
 
-  _ValueUpdater({
+  ValueUpdater({
     required this.value,
     required this.onUpdate,
   });

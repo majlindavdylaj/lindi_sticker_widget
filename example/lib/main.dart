@@ -31,12 +31,12 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
 
-  LindiController controller = LindiController();
+  late LindiController controller;
 
   List<Widget> widgets = [
     SizedBox(
         height: 150,
-        width: 150,
+        width: 100,
         child: Image.network('https://picsum.photos/200/300')
     ),
     const Icon(Icons.favorite, color: Colors.red, size: 50)
@@ -44,6 +44,10 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   void initState() {
+    controller = LindiController(
+      borderColor: Colors.white,
+      iconColor: Colors.black
+    );
     for (var element in widgets) {
       controller.addWidget(element);
     }
@@ -57,15 +61,12 @@ class _MyHomePageState extends State<MyHomePage> {
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: const Text('Lindi Sticker Widget'),
       ),
-      body: Center(
-        child: LindiStickerWidget(
-          controller: controller,
-          child: Container(
-            color: Colors.yellow,
-            width: double.infinity,
-            height: 300,
-          ),
-        ),
+      body: LindiStickerWidget(
+        controller: controller,
+        child: SizedBox(
+          width: double.infinity,
+          height: double.infinity,
+          child: Image.asset('assets/wallpaper.jpg', fit: BoxFit.cover)),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () async {
