@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:lindi_sticker_widget/matrix_gesture_detector.dart';
+import 'package:lindi_sticker_widget/lindi_gesture_detector.dart';
 
+// A Flutter widget class named DraggableWidget for displaying and managing draggable stickers.
 //ignore: must_be_immutable
 class DraggableWidget extends StatelessWidget {
+
+  // Properties to customize the appearance and behavior of the widget.
   Widget child;
   Color borderColor;
   Color iconColor;
@@ -18,19 +21,23 @@ class DraggableWidget extends StatelessWidget {
   double minScale;
   double maxScale;
 
+  // Internal state variables.
   bool _showBorder = true;
   bool _isFlip = false;
   bool _isLock = false;
   bool _isUpdating = false;
   double _scale = 1;
 
+  // Callback functions for various widget interactions.
   Function(Key?) onBorder;
   Function(Key?) onDelete;
   Function(Key?) onLayer;
 
+  // Notifiers for updating the widget when changes occur.
   final ValueNotifier<Matrix4> notifier = ValueNotifier(Matrix4.identity());
   final ValueNotifier<bool> updater = ValueNotifier(true);
 
+  // Constructor to initialize the widget's properties.
   DraggableWidget(
       {super.key,
       required this.child,
@@ -51,21 +58,25 @@ class DraggableWidget extends StatelessWidget {
       required this.onDelete,
       required this.onLayer});
 
+  // Method to update the widget's border visibility.
   update(border) {
     _showBorder = border;
     updater.value = !updater.value;
   }
 
+  // Method to flip the widget.
   _flip() {
     _isFlip = !_isFlip;
     updater.value = !updater.value;
   }
 
+  // Method to mark the widget as "done" and hide its border.
   _done() {
     _showBorder = false;
     updater.value = !updater.value;
   }
 
+  // Method to lock/unlock the widget's interactive features.
   _lock(){
     _isLock = !_isLock;
     showDone = !_isLock;
@@ -80,13 +91,17 @@ class DraggableWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Build the widget based on ValueListenable for updates.
     return ValueListenableBuilder(
       valueListenable: updater,
       builder: (_, __, ___) {
-        double circleSize = 22 / _scale;
-        double iconSize = 14 / _scale;
+        // Calculate sizes and dimensions based on the current scale.
+        double circleSize = 24 / _scale;
+        double iconSize = 13 / _scale;
         double marginSize = 11 / _scale;
-        return MatrixGestureDetector(
+
+        // LindiGestureDetector for handling scaling, rotating, and translating the widget.
+        return LindiGestureDetector(
           shouldTranslate: shouldMove,
           shouldRotate: shouldRotate,
           shouldScale: shouldScale,
@@ -100,13 +115,14 @@ class DraggableWidget extends StatelessWidget {
             _isUpdating = false;
             updater.value = !updater.value;
           },
-          onMatrixUpdate: (s, m, tm, sm, rm) {
+          onUpdate: (s, m) {
             _scale = s;
             notifier.value = m;
           },
           child: AnimatedBuilder(
             animation: notifier,
             builder: (ctx, child) {
+              // Apply the transformation matrix to the child widget.
               Widget transformChild = Transform(
                 transform: notifier.value,
                 child: Center(
@@ -114,7 +130,7 @@ class DraggableWidget extends StatelessWidget {
                     children: [
                       Container(
                         margin: EdgeInsets.all(marginSize),
-                        padding: EdgeInsets.all(10 / _scale),
+                        padding: EdgeInsets.all(13 / _scale),
                         decoration: (showAllBorders && _showBorder)
                             ? BoxDecoration(
                                 border: Border.all(
@@ -129,6 +145,7 @@ class DraggableWidget extends StatelessWidget {
                             flipX: _isFlip, child: this.child),
                         ),
                       ),
+                      // Widgets for interaction (e.g., delete, flip, etc.).
                       if (showAllBorders && _showBorder && showDone)
                         Positioned(
                           right: 0,

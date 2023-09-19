@@ -8,9 +8,14 @@ import 'dart:ui' as ui;
 
 import 'package:lindi_sticker_widget/lindi_sticker_widget.dart';
 
+// A Dart class named LindiController extending ChangeNotifier,
+// used for managing a list of draggable widgets and their properties.
 class LindiController extends ChangeNotifier {
+
+  // List to store draggable widgets.
   List<DraggableWidget> widgets = [];
 
+  // Various properties to customize widget appearance and behavior.
   Color borderColor;
   Color iconColor;
   bool showDone ;
@@ -25,6 +30,7 @@ class LindiController extends ChangeNotifier {
   double minScale;
   double maxScale;
 
+  // Constructor to initialize properties with default values.
   LindiController({
     this.borderColor = Colors.blue,
     this.iconColor = Colors.white,
@@ -39,12 +45,14 @@ class LindiController extends ChangeNotifier {
     this.shouldScale = true,
     this.minScale = 0.5,
     this.maxScale = 4
-  }){
-    notifyListeners();
-  }
+  });
 
+  // Method to add a widget to the list of draggable widgets.
   addWidget(Widget widget) {
+    // Generate a unique key for the widget.
     Key key = Key('lindi-${DateTime.now().millisecondsSinceEpoch}-${_nrRnd()}');
+
+    // Create a DraggableWidget with specified properties.
     widgets.add(DraggableWidget(
         key: key,
         borderColor: borderColor,
@@ -70,13 +78,17 @@ class LindiController extends ChangeNotifier {
           _layer(key);
         },
         child: widget));
+
+    // Highlight the border of the added widget.
     _border(key);
   }
 
+  // Method to clear borders of all widgets.
   clearAllBorders() {
     _border(const Key('-1'));
   }
 
+  // Method to highlight the border of a specific widget.
   _border(Key? key) {
     for (int i = 0; i < widgets.length; i++) {
       if (widgets[i].key == key) {
@@ -88,6 +100,7 @@ class LindiController extends ChangeNotifier {
     notifyListeners();
   }
 
+  // Method to delete a widget from the list.
   _delete(key) {
     widgets.removeWhere((element) {
       return element.key! == key;
@@ -95,6 +108,7 @@ class LindiController extends ChangeNotifier {
     notifyListeners();
   }
 
+  // Method to change the layering of a widget.
   _layer(key) {
     DraggableWidget widget =
         widgets.firstWhere((element) => element.key == key);
@@ -106,13 +120,16 @@ class LindiController extends ChangeNotifier {
     }
   }
 
+  // Method to save the widget layout as a Uint8List image.
   Future<Uint8List?> saveAsUint8List() async {
+    // Clear all borders before capturing the image.
     clearAllBorders();
     try {
       Uint8List? pngBytes;
       double pixelRatio = 2;
       await Future.delayed(const Duration(milliseconds: 700))
           .then((value) async {
+        // Capture the image of the widget.
         RenderRepaintBoundary boundary =
             LindiStickerWidget.globalKey.currentContext?.findRenderObject()
                 as RenderRepaintBoundary;
@@ -127,6 +144,7 @@ class LindiController extends ChangeNotifier {
     }
   }
 
+  // Helper function to generate a random number.
   int _nrRnd() {
     Random rnd;
     int min = 1;

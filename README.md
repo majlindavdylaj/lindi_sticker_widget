@@ -7,7 +7,8 @@
 &nbsp; Move</br>
 &nbsp; Layer Update (Change Stack position)</br>
 &nbsp; Delete</br>
-&nbsp; Flip
+&nbsp; Flip</br>
+&nbsp; Lock
 <br>
 <br>
 
@@ -31,15 +32,35 @@ Sample code to integrate can be found in [example/lib/main.dart](example/lib/mai
   LindiController controller = LindiController();
 ```
 
+#### Custom LindiController
+
+```dart
+  LindiController controller = LindiController(
+      borderColor: Colors.white,
+      iconColor: Colors.black,
+      showDone: true,
+      showClose: true,
+      showFlip: true,
+      showStack: true,
+      showLock: true,
+      showAllBorders: true,
+      shouldScale: true,
+      shouldRotate: true,
+      shouldMove: true,
+      minScale: 0.5,
+      maxScale: 4,
+    );
+```
+
 #### Integrate LindiStickerWidget
 
 ```dart
 LindiStickerWidget(
     controller: controller,
-    child: Container(
-        color: Colors.yellow,
+    child: SizedBox(
         width: double.infinity,
-        height: 300,
+        height: double.infinity,
+        child: Image.network('https://picsum.photos/200/300', fit: BoxFit.cover)
     ),
 )
 ```
@@ -60,7 +81,7 @@ Uint8List? image = await controller.saveAsUint8List();
 
 ## Screenshot
 
-![Demo](/example/assets/Screenshot_1694168087.png)
+![Demo](/example/assets/Screenshot.png)
 
 ***
 

@@ -35,9 +35,9 @@ class _MyHomePageState extends State<MyHomePage> {
 
   List<Widget> widgets = [
     SizedBox(
-        height: 150,
+        height: 100,
         width: 100,
-        child: Image.network('https://picsum.photos/200/300')
+        child: Image.network('https://picsum.photos/200/200')
     ),
     const Icon(Icons.favorite, color: Colors.red, size: 50)
   ];
@@ -66,10 +66,12 @@ class _MyHomePageState extends State<MyHomePage> {
         child: SizedBox(
           width: double.infinity,
           height: double.infinity,
-          child: Image.asset('assets/wallpaper.jpg', fit: BoxFit.cover)),
+          child: Image.network('https://picsum.photos/200/300', fit: BoxFit.cover)
+        ),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () async {
+
           controller.addWidget(
             Container(
               padding: const EdgeInsets.all(5),
@@ -83,6 +85,7 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
             ),
           );
+
         },
         tooltip: 'Add',
         child: const Icon(Icons.add),
