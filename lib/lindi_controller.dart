@@ -8,44 +8,108 @@ import 'dart:ui' as ui;
 
 import 'package:lindi_sticker_widget/lindi_sticker_widget.dart';
 
-// A Dart class named LindiController extending ChangeNotifier,
-// used for managing a list of draggable widgets and their properties.
+/// A Dart class LindiController extending ChangeNotifier,
+/// used for managing a list of draggable widgets and their properties.
+///
 class LindiController extends ChangeNotifier {
-
-  // List to store draggable widgets.
+  /// List to store draggable widgets.
+  ///
   List<DraggableWidget> widgets = [];
 
-  // Various properties to customize widget appearance and behavior.
+  /// Color of the border
+  ///
+  /// Defaults to Colors.blue
+  ///
   Color borderColor;
+
+  /// Color of the icons
+  ///
+  /// Defaults to Colors.white
+  ///
   Color iconColor;
-  bool showDone ;
+
+  /// Show the done button
+  ///
+  /// Defaults to true
+  ///
+  bool showDone;
+
+  /// Show the close button
+  ///
+  /// Defaults to true
+  ///
   bool showClose;
+
+  /// Show the flip button
+  ///
+  /// Defaults to true
+  ///
   bool showFlip;
+
+  /// Show the stack button
+  ///
+  /// Defaults to true
+  ///
   bool showStack;
+
+  /// Show the lock button
+  ///
+  /// Defaults to true
+  ///
   bool showLock;
+
+  /// Show All Buttons and Border
+  ///
+  /// Defaults to true
+  ///
   bool showAllBorders;
+
+  /// Should the widget move
+  ///
+  /// Defaults to true
+  ///
   bool shouldMove;
+
+  /// Should the widget rotate
+  ///
+  /// Defaults to true
+  ///
   bool shouldRotate;
+
+  /// Should the widget scale
+  ///
+  /// Defaults to true
+  ///
   bool shouldScale;
+
+  /// Widget minimum scale
+  ///
+  /// Defaults 0.5
+  ///
   double minScale;
+
+  /// Widget maximum scale
+  ///
+  /// Defaults 4
+  ///
   double maxScale;
 
-  // Constructor to initialize properties with default values.
-  LindiController({
-    this.borderColor = Colors.blue,
-    this.iconColor = Colors.white,
-    this.showDone = true,
-    this.showClose = true,
-    this.showFlip = true,
-    this.showStack = true,
-    this.showLock = true,
-    this.showAllBorders = true,
-    this.shouldMove = true,
-    this.shouldRotate = true,
-    this.shouldScale = true,
-    this.minScale = 0.5,
-    this.maxScale = 4
-  });
+  /// Constructor to initialize properties with default values.
+  ///
+  LindiController(
+      {this.borderColor = Colors.blue,
+      this.iconColor = Colors.white,
+      this.showDone = true,
+      this.showClose = true,
+      this.showFlip = true,
+      this.showStack = true,
+      this.showLock = true,
+      this.showAllBorders = true,
+      this.shouldMove = true,
+      this.shouldRotate = true,
+      this.shouldScale = true,
+      this.minScale = 0.5,
+      this.maxScale = 4});
 
   // Method to add a widget to the list of draggable widgets.
   addWidget(Widget widget) {

@@ -3,24 +3,26 @@ library lindi_sticker_widget;
 import 'package:flutter/material.dart';
 import 'package:lindi_sticker_widget/lindi_controller.dart';
 
-// A Flutter widget class named LindiStickerWidget, which is used to display draggable stickers.
+/// A Flutter widget class LindiStickerWidget, which is used to display draggable stickers.
+///
 //ignore: must_be_immutable
 class LindiStickerWidget extends StatefulWidget {
-
-  // A global key used to access this widget's state from outside.
+  /// A global key used to access this widget's state from outside.
+  ///
   static GlobalKey globalKey = GlobalKey();
 
-  // The controller responsible for managing stickers and their behavior.
+  /// The controller responsible for managing stickers and their behavior.
+  ///
   LindiController controller;
 
-  // The child widget (the main content) to be displayed on the sticker.
+  /// The [child] widget (the main content) to be displayed on the sticker.
+  ///
   Widget child;
 
-  // Constructor to initialize the widget with a controller and a child widget.
-  LindiStickerWidget({Key? key,
-    required this.controller,
-    required this.child
-  }) : super(key: key);
+  /// Constructor to initialize the widget with a controller and a child widget.
+  ///
+  LindiStickerWidget({Key? key, required this.controller, required this.child})
+      : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _LindiStickerWidgetState();

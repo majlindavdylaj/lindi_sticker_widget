@@ -2,40 +2,53 @@ import 'dart:math';
 
 import 'package:flutter/widgets.dart';
 
-// Define a callback type for LindiGestureDetector updates.
+/// Define a callback type for LindiGestureDetector updates.
+///
 typedef LindiGestureDetectorCallback = void Function(
-  double scale,
-  Matrix4 matrix
-);
+    double scale, Matrix4 matrix);
 
-// LindiGestureDetector for handling scaling, rotating, and translating the widget.
+/// LindiGestureDetector for handling scaling, rotating, and translating the widget.
+///
 class LindiGestureDetector extends StatefulWidget {
-
-  // Callback function for when updates occur.
+  /// Callback function for when updates occur.
+  ///
   final LindiGestureDetectorCallback onUpdate;
 
-  // Child widget wrapped by the gesture detector.
+  /// [child] widget wrapped by the gesture detector.
+  ///
   final Widget child;
 
-  // Control flags for various gesture types (translate, scale, rotate).
+  /// Control flags for various gesture types (translate, scale, rotate).
+  ///
+  /// Defaults to true
+  ///
   final bool shouldTranslate;
   final bool shouldScale;
   final bool shouldRotate;
 
-  // Flag to clip the child widget.
+  /// Flag to clip the child widget.
+  ///
+  /// Defaults to true
+  ///
   final bool clipChild;
 
-  // Behavior when handling hit tests.
+  /// Behavior when handling hit tests.
+  ///
+  /// Defaults to HitTestBehavior.deferToChild
+  ///
   final HitTestBehavior behavior;
 
-  // Alignment of the focal point.
+  /// Alignment of the focal point.
+  ///
   final Alignment? focalPointAlignment;
 
-  // Callback functions for scale start and end.
+  /// Callback functions for scale start and end.
+  ///
   final VoidCallback onScaleStart;
   final VoidCallback onScaleEnd;
 
-  // Minimum and maximum scale values.
+  /// Minimum and maximum scale values.
+  ///
   final double minScale;
   final double maxScale;
 
@@ -52,8 +65,7 @@ class LindiGestureDetector extends StatefulWidget {
       required this.onScaleStart,
       required this.onScaleEnd,
       required this.minScale,
-      required this.maxScale
-      })
+      required this.maxScale})
       : super(key: key);
 
   @override
@@ -61,7 +73,6 @@ class LindiGestureDetector extends StatefulWidget {
 }
 
 class LindiGestureDetectorState extends State<LindiGestureDetector> {
-
   // Matrices for handling translation, scaling, and rotation.
   Matrix4 translationDeltaMatrix = Matrix4.identity();
   Matrix4 scaleDeltaMatrix = Matrix4.identity();
@@ -74,10 +85,9 @@ class LindiGestureDetectorState extends State<LindiGestureDetector> {
 
   @override
   Widget build(BuildContext context) {
-
     // Wrap the child widget in a ClipRect if clipping is enabled.
     Widget child =
-      widget.clipChild ? ClipRect(child: widget.child) : widget.child;
+        widget.clipChild ? ClipRect(child: widget.child) : widget.child;
 
     // Create a GestureDetector to handle gestures.
     return GestureDetector(
@@ -141,7 +151,7 @@ class LindiGestureDetectorState extends State<LindiGestureDetector> {
     // Handle scaling.
     if (widget.shouldScale && details.scale != 1.0) {
       double sc = recordOldScale * details.scale;
-      if(sc > widget.minScale && sc < widget.maxScale) {
+      if (sc > widget.minScale && sc < widget.maxScale) {
         recordScale = sc;
         double scaleDelta = scaleUpdater.update(details.scale);
         scaleDeltaMatrix = _scale(scaleDelta, focalPoint);
