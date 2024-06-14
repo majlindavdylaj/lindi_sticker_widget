@@ -92,7 +92,7 @@ class DraggableWidget extends StatelessWidget {
   }
 
   // Method to update the widget.
-  updateWidget(Widget child){
+  updateWidget(Widget child) {
     this.child = child;
     updater.value = !updater.value;
   }

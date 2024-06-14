@@ -164,7 +164,7 @@ class LindiController extends ChangeNotifier {
     for (int i = 0; i < widgets.length; i++) {
       if (widgets[i].key == key) {
         widgets[i].showBorder(true);
-        if(selectedIndex.current != i){
+        if (selectedIndex.current != i) {
           selectedIndex.update(i);
         }
       } else {
