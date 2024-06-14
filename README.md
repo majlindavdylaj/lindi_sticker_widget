@@ -73,6 +73,20 @@ controller.addWidget(
 );
 ```
 
+#### Get index of selected widget
+
+```dart
+controller.selectedIndex.stream.listen((int index) {
+  print(index);
+});
+```
+
+#### Update widget
+
+```dart
+controller.widgets[index].updateWidget(const Text('Hello'));
+```
+
 #### Save LindiStickerWidget as Uint8List
 
 ```dart

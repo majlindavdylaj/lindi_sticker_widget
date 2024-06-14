@@ -8,3 +8,9 @@
 * Now easier to scale widget
 * Customize
 * Bug fixes
+
+## 0.1.2
+
+* Get index of selected widget
+* Update widget
+* Bug fixes

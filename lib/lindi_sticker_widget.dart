@@ -32,10 +32,19 @@ class _LindiStickerWidgetState extends State<LindiStickerWidget> {
   @override
   void initState() {
     // Add a listener to the controller to update the widget when the controller changes.
-    widget.controller.addListener(() {
-      setState(() {});
-    });
+    widget.controller.addListener(_update);
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    widget.controller.removeListener(_update);
+    widget.controller.selectedIndex.close();
+    super.dispose();
+  }
+
+  _update() {
+    setState(() {});
   }
 
   @override

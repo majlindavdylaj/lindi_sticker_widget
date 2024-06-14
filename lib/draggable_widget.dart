@@ -86,8 +86,14 @@ class DraggableWidget extends StatelessWidget {
       required this.onLayer});
 
   // Method to update the widget's border visibility.
-  update(border) {
-    _showBorder = border;
+  showBorder(bool showBorder) {
+    _showBorder = showBorder;
+    updater.value = !updater.value;
+  }
+
+  // Method to update the widget.
+  updateWidget(Widget child){
+    this.child = child;
     updater.value = !updater.value;
   }
 
@@ -123,9 +129,9 @@ class DraggableWidget extends StatelessWidget {
         valueListenable: updater,
         builder: (_, __, ___) {
           // Calculate sizes and dimensions based on the current scale.
-          double circleSize = 24 / _scale;
-          double iconSize = 13 / _scale;
-          double marginSize = 11 / _scale;
+          double circleSize = 26;
+          double iconSize = 14;
+          double marginSize = 12 / _scale;
 
           // LindiGestureDetector for handling scaling, rotating, and translating the widget.
           return LindiGestureDetector(
@@ -174,40 +180,48 @@ class DraggableWidget extends StatelessWidget {
                         if (showAllBorders && _showBorder && showDone)
                           Positioned(
                             right: 0,
-                            child: GestureDetector(
-                              onTap: () {
-                                _done();
-                              },
-                              child: SizedBox(
-                                width: circleSize,
-                                height: circleSize,
-                                child: CircleAvatar(
-                                    backgroundColor: borderColor,
-                                    child: Icon(
-                                      Icons.done,
-                                      size: iconSize,
-                                      color: iconColor,
-                                    )),
+                            child: ScaleTransition(
+                              alignment: Alignment.topRight,
+                              scale: AlwaysStoppedAnimation(1 / _scale),
+                              child: GestureDetector(
+                                onTap: () {
+                                  _done();
+                                },
+                                child: SizedBox(
+                                  width: circleSize,
+                                  height: circleSize,
+                                  child: CircleAvatar(
+                                      backgroundColor: borderColor,
+                                      child: Icon(
+                                        Icons.done,
+                                        size: 14,
+                                        color: iconColor,
+                                      )),
+                                ),
                               ),
                             ),
                           ),
                         if (showAllBorders && _showBorder && showClose)
                           Positioned(
                             left: 0,
-                            child: GestureDetector(
-                              onTap: () {
-                                onDelete(key);
-                              },
-                              child: SizedBox(
-                                width: circleSize,
-                                height: circleSize,
-                                child: CircleAvatar(
-                                    backgroundColor: borderColor,
-                                    child: Icon(
-                                      Icons.close,
-                                      size: iconSize,
-                                      color: iconColor,
-                                    )),
+                            child: ScaleTransition(
+                              alignment: Alignment.topLeft,
+                              scale: AlwaysStoppedAnimation(1 / _scale),
+                              child: GestureDetector(
+                                onTap: () {
+                                  onDelete(key);
+                                },
+                                child: SizedBox(
+                                  width: circleSize,
+                                  height: circleSize,
+                                  child: CircleAvatar(
+                                      backgroundColor: borderColor,
+                                      child: Icon(
+                                        Icons.close,
+                                        size: iconSize,
+                                        color: iconColor,
+                                      )),
+                                ),
                               ),
                             ),
                           ),
@@ -215,20 +229,24 @@ class DraggableWidget extends StatelessWidget {
                           Positioned(
                             bottom: 0,
                             left: 0,
-                            child: GestureDetector(
-                              onTap: () {
-                                _flip();
-                              },
-                              child: SizedBox(
-                                width: circleSize,
-                                height: circleSize,
-                                child: CircleAvatar(
-                                    backgroundColor: borderColor,
-                                    child: Icon(
-                                      Icons.flip,
-                                      size: iconSize,
-                                      color: iconColor,
-                                    )),
+                            child: ScaleTransition(
+                              alignment: Alignment.bottomLeft,
+                              scale: AlwaysStoppedAnimation(1 / _scale),
+                              child: GestureDetector(
+                                onTap: () {
+                                  _flip();
+                                },
+                                child: SizedBox(
+                                  width: circleSize,
+                                  height: circleSize,
+                                  child: CircleAvatar(
+                                      backgroundColor: borderColor,
+                                      child: Icon(
+                                        Icons.flip,
+                                        size: iconSize,
+                                        color: iconColor,
+                                      )),
+                                ),
                               ),
                             ),
                           ),
@@ -236,20 +254,24 @@ class DraggableWidget extends StatelessWidget {
                           Positioned(
                             bottom: 0,
                             right: 0,
-                            child: GestureDetector(
-                              onTap: () {
-                                onLayer(key);
-                              },
-                              child: SizedBox(
-                                width: circleSize,
-                                height: circleSize,
-                                child: CircleAvatar(
-                                    backgroundColor: borderColor,
-                                    child: Icon(
-                                      Icons.layers,
-                                      size: iconSize,
-                                      color: iconColor,
-                                    )),
+                            child: ScaleTransition(
+                              alignment: Alignment.bottomRight,
+                              scale: AlwaysStoppedAnimation(1 / _scale),
+                              child: GestureDetector(
+                                onTap: () {
+                                  onLayer(key);
+                                },
+                                child: SizedBox(
+                                  width: circleSize,
+                                  height: circleSize,
+                                  child: CircleAvatar(
+                                      backgroundColor: borderColor,
+                                      child: Icon(
+                                        Icons.layers,
+                                        size: iconSize,
+                                        color: iconColor,
+                                      )),
+                                ),
                               ),
                             ),
                           ),
@@ -257,20 +279,24 @@ class DraggableWidget extends StatelessWidget {
                           Positioned(
                             left: 0,
                             right: 0,
-                            child: GestureDetector(
-                              onTap: () {
-                                _lock();
-                              },
-                              child: SizedBox(
-                                width: circleSize,
-                                height: circleSize,
-                                child: CircleAvatar(
-                                    backgroundColor: borderColor,
-                                    child: Icon(
-                                      _isLock ? Icons.lock : Icons.lock_open,
-                                      size: iconSize,
-                                      color: iconColor,
-                                    )),
+                            child: ScaleTransition(
+                              alignment: Alignment.topCenter,
+                              scale: AlwaysStoppedAnimation(1 / _scale),
+                              child: GestureDetector(
+                                onTap: () {
+                                  _lock();
+                                },
+                                child: SizedBox(
+                                  width: circleSize,
+                                  height: circleSize,
+                                  child: CircleAvatar(
+                                      backgroundColor: borderColor,
+                                      child: Icon(
+                                        _isLock ? Icons.lock : Icons.lock_open,
+                                        size: iconSize,
+                                        color: iconColor,
+                                      )),
+                                ),
                               ),
                             ),
                           ),

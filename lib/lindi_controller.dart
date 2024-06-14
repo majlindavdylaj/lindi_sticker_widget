@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:math';
 import 'dart:typed_data';
 
@@ -7,6 +8,8 @@ import 'package:lindi_sticker_widget/draggable_widget.dart';
 import 'dart:ui' as ui;
 
 import 'package:lindi_sticker_widget/lindi_sticker_widget.dart';
+
+import 'index_stream.dart';
 
 /// A Dart class LindiController extending ChangeNotifier,
 /// used for managing a list of draggable widgets and their properties.
@@ -94,6 +97,10 @@ class LindiController extends ChangeNotifier {
   ///
   double maxScale;
 
+  /// Stream to listen selected index
+  ///
+  IndexStream<int> selectedIndex = IndexStream<int>();
+
   /// Constructor to initialize properties with default values.
   ///
   LindiController(
@@ -156,9 +163,12 @@ class LindiController extends ChangeNotifier {
   _border(Key? key) {
     for (int i = 0; i < widgets.length; i++) {
       if (widgets[i].key == key) {
-        widgets[i].update(true);
+        widgets[i].showBorder(true);
+        if(selectedIndex.current != i){
+          selectedIndex.update(i);
+        }
       } else {
-        widgets[i].update(false);
+        widgets[i].showBorder(false);
       }
     }
     notifyListeners();
