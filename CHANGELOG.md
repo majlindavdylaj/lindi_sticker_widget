@@ -9,7 +9,7 @@
 * Customize
 * Bug fixes
 
-## 0.1.2
+## 0.1.3
 
 * Get index of selected widget
 * Update widget
