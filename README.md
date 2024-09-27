@@ -6,6 +6,7 @@
 &nbsp; Resize</br>
 &nbsp; Move</br>
 &nbsp; Layer Update (Change Stack position)</br>
+&nbsp; Edit</br>
 &nbsp; Delete</br>
 &nbsp; Flip</br>
 &nbsp; Lock
@@ -29,27 +30,50 @@ Sample code to integrate can be found in [example/lib/main.dart](example/lib/mai
 #### LindiController
 
 ```dart
-  LindiController controller = LindiController();
-```
-
-#### Custom LindiController
-
-```dart
-  LindiController controller = LindiController(
-      borderColor: Colors.white,
-      iconColor: Colors.black,
-      showDone: true,
-      showClose: true,
-      showFlip: true,
-      showStack: true,
-      showLock: true,
-      showAllBorders: true,
-      shouldScale: true,
-      shouldRotate: true,
-      shouldMove: true,
-      minScale: 0.5,
-      maxScale: 4,
-    );
+LindiController controller = LindiController(
+  borderColor: Colors.white,
+  icons: [
+    LindiStickerIcon(
+        icon: Icons.done,
+        alignment: Alignment.topRight,
+        onTap: () {
+          controller.selectedWidget!.done();
+        }),
+    LindiStickerIcon(
+        icon: Icons.close,
+        alignment: Alignment.topLeft,
+        onTap: () {
+          controller.selectedWidget!.delete();
+        }),
+    LindiStickerIcon(
+        icon: Icons.flip,
+        alignment: Alignment.bottomLeft,
+        onTap: () {
+          controller.selectedWidget!.flip();
+        }),
+    LindiStickerIcon(
+        icon: Icons.layers,
+        alignment: Alignment.bottomRight,
+        onTap: () {
+          controller.selectedWidget!.stack();
+        }),
+    LindiStickerIcon(
+        icon: Icons.lock_open,
+        lockedIcon: Icons.lock,
+        isLock: true,
+        alignment: Alignment.topCenter,
+        onTap: () {
+          controller.selectedWidget!.lock();
+        }),
+    LindiStickerIcon(
+        icon: Icons.edit,
+        alignment: Alignment.bottomCenter,
+        onTap: () {
+          controller.selectedWidget!
+              .edit(const Icon(Icons.star, size: 50, color: Colors.yellow));
+        })
+  ],
+);
 ```
 
 #### Integrate LindiStickerWidget
@@ -68,7 +92,7 @@ LindiStickerWidget(
 #### Add Widget to LindiStickerWidget
 
 ```dart
-controller.addWidget(
+controller.add(
     Text('Hello World')
 );
 ```
@@ -76,15 +100,9 @@ controller.addWidget(
 #### Get index of selected widget
 
 ```dart
-controller.selectedIndex.stream.listen((int index) {
-  print(index);
+controller.onPositionChange((index) {
+  print("widgets size: ${controller.widgets.length}, current index: $index");
 });
-```
-
-#### Update widget
-
-```dart
-controller.widgets[index].updateWidget(const Text('Hello'));
 ```
 
 #### Save LindiStickerWidget as Uint8List

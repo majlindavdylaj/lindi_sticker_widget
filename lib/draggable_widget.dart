@@ -1,26 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:lindi_sticker_widget/lindi_gesture_detector.dart';
+import 'package:lindi_sticker_widget/lindi_sticker_icon.dart';
+import 'package:lindi_sticker_widget/positioned_align.dart';
 
 /// A Flutter widget class DraggableWidget for displaying and managing draggable stickers.
 ///
 //ignore: must_be_immutable
 class DraggableWidget extends StatelessWidget {
+  late List<LindiStickerIcon> _icons;
+
   /// Properties to customize the appearance and behavior of the widget.
   ///
   Widget child;
-  Color borderColor;
-  Color iconColor;
-  bool showDone;
-  bool showClose;
-  bool showFlip;
-  bool showStack;
-  bool showLock;
-  bool showAllBorders;
-  bool shouldMove;
-  bool shouldRotate;
-  bool shouldScale;
-  double minScale;
-  double maxScale;
+  late Color _borderColor;
+  late double _borderWidth;
+  late bool _showBorders;
+  late bool _shouldMove;
+  late bool _shouldRotate;
+  late bool _shouldScale;
+  late double _minScale;
+  late double _maxScale;
+  late double _insidePadding;
 
   /// Internal state [_showBorder].
   ///
@@ -54,120 +54,137 @@ class DraggableWidget extends StatelessWidget {
 
   /// Callback functions for various widget interactions.
   ///
-  Function(Key?) onBorder;
-  Function(Key?) onDelete;
-  Function(Key?) onLayer;
+  late Function(Key?) _onBorder;
+  late Function(Key?) _onDelete;
+  late Function(Key?) _onLayer;
 
   /// Notifiers for updating the widget when changes occur.
   ///
-  final ValueNotifier<Matrix4> notifier = ValueNotifier(Matrix4.identity());
-  final ValueNotifier<bool> updater = ValueNotifier(true);
+  final ValueNotifier<Matrix4> _notifier = ValueNotifier(Matrix4.identity());
+  final ValueNotifier<bool> _updater = ValueNotifier(true);
 
   /// Constructor to initialize the widget's properties.
   ///
   DraggableWidget(
       {super.key,
+      required icons,
       required this.child,
-      required this.borderColor,
-      required this.iconColor,
-      required this.showDone,
-      required this.showClose,
-      required this.showFlip,
-      required this.showStack,
-      required this.showLock,
-      required this.showAllBorders,
-      required this.shouldMove,
-      required this.shouldRotate,
-      required this.shouldScale,
-      required this.minScale,
-      required this.maxScale,
-      required this.onBorder,
-      required this.onDelete,
-      required this.onLayer});
+      required borderColor,
+      required borderWidth,
+      required showBorders,
+      required shouldMove,
+      required shouldRotate,
+      required shouldScale,
+      required minScale,
+      required maxScale,
+      required onBorder,
+      required onDelete,
+      required onLayer,
+      required insidePadding}) {
+    _icons = icons;
+    _borderColor = borderColor;
+    _borderWidth = borderWidth;
+    _showBorders = showBorders;
+    _shouldMove = shouldMove;
+    _shouldRotate = shouldRotate;
+    _shouldScale = shouldScale;
+    _minScale = minScale;
+    _maxScale = maxScale;
+    _onBorder = onBorder;
+    _onDelete = onDelete;
+    _onLayer = onLayer;
+    _insidePadding = insidePadding;
+  }
 
   // Method to update the widget's border visibility.
   showBorder(bool showBorder) {
     _showBorder = showBorder;
-    updater.value = !updater.value;
+    _updater.value = !_updater.value;
   }
 
-  // Method to update the widget.
-  updateWidget(Widget child) {
+  // Method to edit the widget.
+  edit(Widget child) {
     this.child = child;
-    updater.value = !updater.value;
+    _updater.value = !_updater.value;
   }
 
   // Method to flip the widget.
-  _flip() {
+  flip() {
     _isFlip = !_isFlip;
-    updater.value = !updater.value;
+    _updater.value = !_updater.value;
   }
 
   // Method to mark the widget as "done" and hide its border.
-  _done() {
+  done() {
     _showBorder = false;
-    updater.value = !updater.value;
+    _updater.value = !_updater.value;
+  }
+
+  // Method to delete the widget.
+  delete() {
+    _onDelete(key);
+  }
+
+  // Method to stack, change position.
+  stack() {
+    _onLayer(key);
   }
 
   // Method to lock/unlock the widget's interactive features.
-  _lock() {
+  lock() {
     _isLock = !_isLock;
-    showDone = !_isLock;
-    showClose = !_isLock;
-    showFlip = !_isLock;
-    showStack = !_isLock;
-    shouldScale = !_isLock;
-    shouldRotate = !_isLock;
-    shouldMove = !_isLock;
-    updater.value = !updater.value;
+    _shouldScale = !_isLock;
+    _shouldRotate = !_isLock;
+    _shouldMove = !_isLock;
+    _updater.value = !_updater.value;
   }
 
   @override
   Widget build(BuildContext context) {
     // Build the widget based on ValueListenable for updates.
     return ValueListenableBuilder(
-        valueListenable: updater,
+        valueListenable: _updater,
         builder: (_, __, ___) {
           // Calculate sizes and dimensions based on the current scale.
-          double circleSize = 26;
-          double iconSize = 14;
           double marginSize = 12 / _scale;
 
           // LindiGestureDetector for handling scaling, rotating, and translating the widget.
           return LindiGestureDetector(
-            shouldTranslate: shouldMove,
-            shouldRotate: shouldRotate,
-            shouldScale: shouldScale,
-            minScale: minScale,
-            maxScale: maxScale,
+            shouldTranslate: _shouldMove,
+            shouldRotate: _shouldRotate,
+            shouldScale: _shouldScale,
+            minScale: _minScale,
+            maxScale: _maxScale,
             onScaleStart: () {
               _isUpdating = true;
-              onBorder(key);
+              _onBorder(key);
             },
             onScaleEnd: () {
               _isUpdating = false;
-              updater.value = !updater.value;
+              _updater.value = !_updater.value;
             },
             onUpdate: (s, m) {
               _scale = s;
-              notifier.value = m;
+              _notifier.value = m;
             },
             child: AnimatedBuilder(
-              animation: notifier,
+              animation: _notifier,
               builder: (ctx, child) {
                 // Apply the transformation matrix to the child widget.
                 Widget transformChild = Transform(
-                  transform: notifier.value,
+                  transform: _notifier.value,
                   child: Center(
                     child: Stack(
+                      alignment: Alignment.center,
                       children: [
                         Container(
                           margin: EdgeInsets.all(marginSize),
-                          padding: EdgeInsets.all(13 / _scale),
-                          decoration: (showAllBorders && _showBorder)
+                          padding: EdgeInsets.all(_insidePadding / _scale),
+                          decoration: (_showBorders && _showBorder)
                               ? BoxDecoration(
                                   border: Border.all(
-                                      color: borderColor, width: 1.5 / _scale),
+                                      color: _borderColor,
+                                      width: _borderWidth / _scale),
                                 )
                               : null,
                           child: FittedBox(
@@ -177,129 +194,41 @@ class DraggableWidget extends StatelessWidget {
                           ),
                         ),
                         // Widgets for interaction (e.g., delete, flip, etc.).
-                        if (showAllBorders && _showBorder && showDone)
-                          Positioned(
-                            right: 0,
-                            child: ScaleTransition(
-                              alignment: Alignment.topRight,
-                              scale: AlwaysStoppedAnimation(1 / _scale),
-                              child: GestureDetector(
-                                onTap: () {
-                                  _done();
-                                },
-                                child: SizedBox(
-                                  width: circleSize,
-                                  height: circleSize,
-                                  child: CircleAvatar(
-                                      backgroundColor: borderColor,
-                                      child: Icon(
-                                        Icons.done,
-                                        size: 14,
-                                        color: iconColor,
-                                      )),
+                        for (int i = 0; i < _icons.length; i++) ...[
+                          if (_showBorders &&
+                              _showBorder &&
+                              (!_isLock || _icons[i].isLock))
+                            Builder(builder: (context) {
+                              LindiStickerIcon icon = _icons[i];
+                              double circleSize = icon.iconSize + 12;
+                              return PositionedAlign(
+                                alignment: icon.alignment,
+                                child: ScaleTransition(
+                                  alignment: icon.alignment,
+                                  scale: AlwaysStoppedAnimation(1 / _scale),
+                                  child: GestureDetector(
+                                    onTap: icon.onTap,
+                                    child: SizedBox(
+                                      width: circleSize,
+                                      height: circleSize,
+                                      child: CircleAvatar(
+                                          backgroundColor: icon.backgroundColor,
+                                          child: Icon(
+                                            (icon.isLock &&
+                                                    icon.lockedIcon != null)
+                                                ? _isLock
+                                                    ? icon.lockedIcon
+                                                    : icon.icon
+                                                : icon.icon,
+                                            size: icon.iconSize,
+                                            color: icon.iconColor,
+                                          )),
+                                    ),
+                                  ),
                                 ),
-                              ),
-                            ),
-                          ),
-                        if (showAllBorders && _showBorder && showClose)
-                          Positioned(
-                            left: 0,
-                            child: ScaleTransition(
-                              alignment: Alignment.topLeft,
-                              scale: AlwaysStoppedAnimation(1 / _scale),
-                              child: GestureDetector(
-                                onTap: () {
-                                  onDelete(key);
-                                },
-                                child: SizedBox(
-                                  width: circleSize,
-                                  height: circleSize,
-                                  child: CircleAvatar(
-                                      backgroundColor: borderColor,
-                                      child: Icon(
-                                        Icons.close,
-                                        size: iconSize,
-                                        color: iconColor,
-                                      )),
-                                ),
-                              ),
-                            ),
-                          ),
-                        if (showAllBorders && _showBorder && showFlip)
-                          Positioned(
-                            bottom: 0,
-                            left: 0,
-                            child: ScaleTransition(
-                              alignment: Alignment.bottomLeft,
-                              scale: AlwaysStoppedAnimation(1 / _scale),
-                              child: GestureDetector(
-                                onTap: () {
-                                  _flip();
-                                },
-                                child: SizedBox(
-                                  width: circleSize,
-                                  height: circleSize,
-                                  child: CircleAvatar(
-                                      backgroundColor: borderColor,
-                                      child: Icon(
-                                        Icons.flip,
-                                        size: iconSize,
-                                        color: iconColor,
-                                      )),
-                                ),
-                              ),
-                            ),
-                          ),
-                        if (showAllBorders && _showBorder && showStack)
-                          Positioned(
-                            bottom: 0,
-                            right: 0,
-                            child: ScaleTransition(
-                              alignment: Alignment.bottomRight,
-                              scale: AlwaysStoppedAnimation(1 / _scale),
-                              child: GestureDetector(
-                                onTap: () {
-                                  onLayer(key);
-                                },
-                                child: SizedBox(
-                                  width: circleSize,
-                                  height: circleSize,
-                                  child: CircleAvatar(
-                                      backgroundColor: borderColor,
-                                      child: Icon(
-                                        Icons.layers,
-                                        size: iconSize,
-                                        color: iconColor,
-                                      )),
-                                ),
-                              ),
-                            ),
-                          ),
-                        if (showAllBorders && _showBorder && showLock)
-                          Positioned(
-                            left: 0,
-                            right: 0,
-                            child: ScaleTransition(
-                              alignment: Alignment.topCenter,
-                              scale: AlwaysStoppedAnimation(1 / _scale),
-                              child: GestureDetector(
-                                onTap: () {
-                                  _lock();
-                                },
-                                child: SizedBox(
-                                  width: circleSize,
-                                  height: circleSize,
-                                  child: CircleAvatar(
-                                      backgroundColor: borderColor,
-                                      child: Icon(
-                                        _isLock ? Icons.lock : Icons.lock_open,
-                                        size: iconSize,
-                                        color: iconColor,
-                                      )),
-                                ),
-                              ),
-                            ),
-                          ),
+                              );
+                            }),
+                        ],
                       ],
                     ),
                   ),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:lindi_sticker_widget/lindi_controller.dart';
+import 'package:lindi_sticker_widget/lindi_sticker_icon.dart';
 import 'package:lindi_sticker_widget/lindi_sticker_widget.dart';
 
 void main() {
@@ -42,11 +43,57 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   void initState() {
-    controller =
-        LindiController(borderColor: Colors.white, iconColor: Colors.black);
-    for (var element in widgets) {
-      controller.addWidget(element);
-    }
+    controller = LindiController(
+      borderColor: Colors.white,
+      icons: [
+        LindiStickerIcon(
+            icon: Icons.done,
+            alignment: Alignment.topRight,
+            onTap: () {
+              controller.selectedWidget!.done();
+            }),
+        LindiStickerIcon(
+            icon: Icons.close,
+            alignment: Alignment.topLeft,
+            onTap: () {
+              controller.selectedWidget!.delete();
+            }),
+        LindiStickerIcon(
+            icon: Icons.flip,
+            alignment: Alignment.bottomLeft,
+            onTap: () {
+              controller.selectedWidget!.flip();
+            }),
+        LindiStickerIcon(
+            icon: Icons.layers,
+            alignment: Alignment.bottomRight,
+            onTap: () {
+              controller.selectedWidget!.stack();
+            }),
+        LindiStickerIcon(
+            icon: Icons.lock_open,
+            lockedIcon: Icons.lock,
+            isLock: true,
+            alignment: Alignment.topCenter,
+            onTap: () {
+              controller.selectedWidget!.lock();
+            }),
+        LindiStickerIcon(
+            icon: Icons.edit,
+            alignment: Alignment.bottomCenter,
+            onTap: () {
+              controller.selectedWidget!
+                  .edit(const Icon(Icons.star, size: 50, color: Colors.yellow));
+            })
+      ],
+    );
+
+    controller.addAll(widgets);
+
+    controller.onPositionChange((index) {
+      debugPrint(
+          "widgets size: ${controller.widgets.length}, current index: $index");
+    });
     super.initState();
   }
 
@@ -67,7 +114,7 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () async {
-          controller.addWidget(
+          controller.add(
             Container(
               padding: const EdgeInsets.all(5),
               decoration: const BoxDecoration(

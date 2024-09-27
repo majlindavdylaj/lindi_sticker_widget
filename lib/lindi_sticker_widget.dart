@@ -39,7 +39,7 @@ class _LindiStickerWidgetState extends State<LindiStickerWidget> {
   @override
   void dispose() {
     widget.controller.removeListener(_update);
-    widget.controller.selectedIndex.close();
+    widget.controller.close();
     super.dispose();
   }
 
@@ -60,11 +60,7 @@ class _LindiStickerWidgetState extends State<LindiStickerWidget> {
           // A positioned.fill Stack to overlay draggable widgets on top of the main content.
           Positioned.fill(
             child: Stack(
-              children: [
-                // Create draggable widgets from the controller's list and add them to the stack.
-                for (int i = 0; i < widget.controller.widgets.length; i++)
-                  widget.controller.widgets[i]
-              ],
+              children: widget.controller.widgets,
             ),
           )
         ],

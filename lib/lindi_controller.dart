@@ -5,6 +5,7 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:lindi_sticker_widget/draggable_widget.dart';
+import 'package:lindi_sticker_widget/lindi_sticker_icon.dart';
 import 'dart:ui' as ui;
 
 import 'package:lindi_sticker_widget/lindi_sticker_widget.dart';
@@ -19,53 +20,27 @@ class LindiController extends ChangeNotifier {
   ///
   List<DraggableWidget> widgets = [];
 
+  /// List to store icons.
+  ///
+  List<LindiStickerIcon> icons;
+
   /// Color of the border
   ///
   /// Defaults to Colors.blue
   ///
   Color borderColor;
 
-  /// Color of the icons
+  /// Width of the border
   ///
-  /// Defaults to Colors.white
+  /// Defaults to 1.5
   ///
-  Color iconColor;
-
-  /// Show the done button
-  ///
-  /// Defaults to true
-  ///
-  bool showDone;
-
-  /// Show the close button
-  ///
-  /// Defaults to true
-  ///
-  bool showClose;
-
-  /// Show the flip button
-  ///
-  /// Defaults to true
-  ///
-  bool showFlip;
-
-  /// Show the stack button
-  ///
-  /// Defaults to true
-  ///
-  bool showStack;
-
-  /// Show the lock button
-  ///
-  /// Defaults to true
-  ///
-  bool showLock;
+  double borderWidth;
 
   /// Show All Buttons and Border
   ///
   /// Defaults to true
   ///
-  bool showAllBorders;
+  bool showBorders;
 
   /// Should the widget move
   ///
@@ -97,48 +72,51 @@ class LindiController extends ChangeNotifier {
   ///
   double maxScale;
 
+  /// Widget inside padding
+  ///
+  /// Defaults 13
+  ///
+  double insidePadding;
+
   /// Stream to listen selected index
   ///
-  IndexStream<int> selectedIndex = IndexStream<int>();
+  final IndexStream<int> _selectedIndex = IndexStream<int>();
+  int _currentIndex = -1;
+
+  bool deleted = false;
 
   /// Constructor to initialize properties with default values.
   ///
   LindiController(
-      {this.borderColor = Colors.blue,
-      this.iconColor = Colors.white,
-      this.showDone = true,
-      this.showClose = true,
-      this.showFlip = true,
-      this.showStack = true,
-      this.showLock = true,
-      this.showAllBorders = true,
+      {required this.icons,
+      this.borderColor = Colors.white,
+      this.borderWidth = 1.5,
+      this.showBorders = true,
       this.shouldMove = true,
       this.shouldRotate = true,
       this.shouldScale = true,
       this.minScale = 0.5,
-      this.maxScale = 4});
+      this.maxScale = 4,
+      this.insidePadding = 13});
 
   // Method to add a widget to the list of draggable widgets.
-  addWidget(Widget widget) {
+  add(Widget widget) {
     // Generate a unique key for the widget.
     Key key = Key('lindi-${DateTime.now().millisecondsSinceEpoch}-${_nrRnd()}');
 
     // Create a DraggableWidget with specified properties.
     widgets.add(DraggableWidget(
         key: key,
+        icons: icons,
         borderColor: borderColor,
-        iconColor: iconColor,
-        showDone: showDone,
-        showClose: showClose,
-        showFlip: showFlip,
-        showStack: showStack,
-        showLock: showLock,
-        showAllBorders: showAllBorders,
+        borderWidth: borderWidth,
+        showBorders: showBorders,
         shouldMove: shouldMove,
         shouldRotate: shouldRotate,
         shouldScale: shouldScale,
         minScale: minScale,
         maxScale: maxScale,
+        insidePadding: insidePadding,
         onBorder: (key) {
           _border(key);
         },
@@ -154,9 +132,39 @@ class LindiController extends ChangeNotifier {
     _border(key);
   }
 
+  // Adds all the widgets from the given list
+  addAll(List<Widget> widgets) {
+    for (int i = 0; i < widgets.length; i++) {
+      add(widgets[i]);
+    }
+  }
+
+  // Sets up a listener for changes in the selected widget's position.
+  // The provided callback function `stream` will be called whenever the position changes.
+  onPositionChange(Function(int) stream) {
+    _selectedIndex.stream.listen((int index) {
+      _currentIndex = index;
+      stream(_currentIndex);
+    });
+  }
+
+  // Returns the currently selected widget based on the _currentIndex.
+  // If the _currentIndex is within the valid range, the corresponding widget is returned.
+  // Otherwise, it returns null.
+  DraggableWidget? get selectedWidget {
+    if (_currentIndex >= 0 && _currentIndex < widgets.length) {
+      return widgets[_currentIndex];
+    }
+    return null;
+  }
+
   // Method to clear borders of all widgets.
   clearAllBorders() {
     _border(const Key('-1'));
+  }
+
+  close() {
+    _selectedIndex.close();
   }
 
   // Method to highlight the border of a specific widget.
@@ -164,8 +172,11 @@ class LindiController extends ChangeNotifier {
     for (int i = 0; i < widgets.length; i++) {
       if (widgets[i].key == key) {
         widgets[i].showBorder(true);
-        if (selectedIndex.current != i) {
-          selectedIndex.update(i);
+        if (_selectedIndex.current == null ||
+            deleted ||
+            widgets[_selectedIndex.current!].key != widgets[i].key) {
+          if (deleted) deleted = false;
+          _selectedIndex.update(i);
         }
       } else {
         widgets[i].showBorder(false);
@@ -179,17 +190,21 @@ class LindiController extends ChangeNotifier {
     widgets.removeWhere((element) {
       return element.key! == key;
     });
+    deleted = true;
+    //If widget is deleted, selected index is -1
+    _selectedIndex.update(-1);
     notifyListeners();
   }
 
   // Method to change the layering of a widget.
   _layer(key) {
-    DraggableWidget widget =
-        widgets.firstWhere((element) => element.key == key);
-    int index = widgets.indexOf(widget);
-    if (index != 0) {
-      widgets.remove(widget);
-      widgets.insert(index - 1, widget);
+    int index =
+        widgets.indexOf(widgets.firstWhere((element) => element.key == key));
+    if (index > 0) {
+      DraggableWidget item = widgets.removeAt(index);
+      _currentIndex = index - 1;
+      _selectedIndex.update(_currentIndex);
+      widgets.insert(_currentIndex, item);
       notifyListeners();
     }
   }

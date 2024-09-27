@@ -1,6 +1,8 @@
-## 0.0.4
+## 0.1.3
 
-* Publish
+* Get index of selected widget
+* Update widget
+* Bug fixes
 
 ## 0.1.1
 
@@ -9,8 +11,6 @@
 * Customize
 * Bug fixes
 
-## 0.1.3
+## 0.0.4
 
-* Get index of selected widget
-* Update widget
-* Bug fixes
+* Publish
