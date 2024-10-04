@@ -29,7 +29,7 @@ All types of contributions are encouraged and valued. See the [Table of Contents
 ## Code of Conduct
 
 This project and everyone participating in it is governed by the
-[Lindi Sticker Widget Code of Conduct](https://github.com/majlindavdylaj/lindi_sticker_widgetblob/master/CODE_OF_CONDUCT.md).
+[Lindi Sticker Widget Code of Conduct](https://github.com/majlindavdylaj/lindi_sticker_widgetblob/blob/master/CODE_OF_CONDUCT.md).
 By participating, you are expected to uphold this code. Please report unacceptable behavior
 to <>.
 
@@ -153,7 +153,3 @@ Updating, improving and correcting the documentation
 
 ## Join The Project Team
 <!-- TODO -->
-
-<!-- omit in toc -->
-## Attribution
-This guide is based on the **contributing-gen**. [Make your own](https://github.com/bttger/contributing-gen)!
