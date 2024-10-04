@@ -12,7 +12,7 @@ import 'package:lindi_sticker_widget/lindi_sticker_widget.dart';
 
 import 'index_stream.dart';
 
-enum IconType {lock, resize, other}
+enum IconType { lock, resize, other }
 
 /// A Dart class LindiController extending ChangeNotifier,
 /// used for managing a list of draggable widgets and their properties.
@@ -236,15 +236,15 @@ class LindiController extends ChangeNotifier {
     }
   }
 
-  Alignment _ensureWithinBounds(Alignment position){
+  Alignment _ensureWithinBounds(Alignment position) {
     double x = position.x;
     double y = position.y;
 
-    if(position.x < -1) x = -1;
-    if(position.x > 1) x = 1;
+    if (position.x < -1) x = -1;
+    if (position.x > 1) x = 1;
 
-    if(position.y < -1) y = -1;
-    if(position.y > 1) y = 1;
+    if (position.y < -1) y = -1;
+    if (position.y > 1) y = 1;
 
     return Alignment(x, y);
   }

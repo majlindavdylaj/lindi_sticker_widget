@@ -174,7 +174,7 @@ class DraggableWidget extends StatelessWidget {
             minScale: _minScale,
             maxScale: _maxScale,
             onScaleStart: (bool update) {
-              if(update) _isUpdating = true;
+              if (update) _isUpdating = true;
               _onBorder(key);
             },
             onScaleEnd: () {
@@ -185,92 +185,100 @@ class DraggableWidget extends StatelessWidget {
               _scale = s;
               _notifier.value = m;
             },
-            child: Builder(
-              builder: (context) {
-                _gestureDetectorState = context.findAncestorStateOfType<LindiGestureDetectorState>()!;
-                return AnimatedBuilder(
-                  animation: _notifier,
-                  builder: (ctx, child) {
-                    // Apply the transformation matrix to the child widget.
-                    Widget transformChild = Transform(
-                      transform: _notifier.value,
-                      child: Align(
-                        alignment: _position,
-                        child: Stack(
-                          alignment: Alignment.center,
-                          children: [
-                            Container(
-                              margin: EdgeInsets.all(marginSize),
-                              padding: EdgeInsets.all(_insidePadding / _scale),
-                              decoration: (_showBorders && _showBorder)
-                                  ? BoxDecoration(
-                                      border: Border.all(
-                                          color: _borderColor,
-                                          width: _borderWidth / _scale),
-                                    )
-                                  : null,
-                              child: FittedBox(
-                                fit: BoxFit.contain,
-                                child: Transform.flip(
-                                    flipX: _isFlip, child: this.child),
-                              ),
+            child: Builder(builder: (context) {
+              _gestureDetectorState =
+                  context.findAncestorStateOfType<LindiGestureDetectorState>()!;
+              return AnimatedBuilder(
+                animation: _notifier,
+                builder: (ctx, child) {
+                  // Apply the transformation matrix to the child widget.
+                  Widget transformChild = Transform(
+                    transform: _notifier.value,
+                    child: Align(
+                      alignment: _position,
+                      child: Stack(
+                        alignment: Alignment.center,
+                        children: [
+                          Container(
+                            margin: EdgeInsets.all(marginSize),
+                            padding: EdgeInsets.all(_insidePadding / _scale),
+                            decoration: (_showBorders && _showBorder)
+                                ? BoxDecoration(
+                                    border: Border.all(
+                                        color: _borderColor,
+                                        width: _borderWidth / _scale),
+                                  )
+                                : null,
+                            child: FittedBox(
+                              fit: BoxFit.contain,
+                              child: Transform.flip(
+                                  flipX: _isFlip, child: this.child),
                             ),
-                            // Widgets for interaction (e.g., delete, flip, etc.).
-                            for (int i = 0; i < _icons.length; i++) ...[
-                              if (_showBorders && _showBorder &&
-                                  (!_isLock || _icons[i].type == IconType.lock))
-                                Builder(builder: (context) {
-                                  bool isLock = _icons[i].type == IconType.lock;
-                                  bool isResize = _icons[i].type == IconType.resize;
-                                  LindiStickerIcon icon = _icons[i];
-                                  double circleSize = icon.iconSize + 12;
-                                  return PositionedAlign(
+                          ),
+                          // Widgets for interaction (e.g., delete, flip, etc.).
+                          for (int i = 0; i < _icons.length; i++) ...[
+                            if (_showBorders &&
+                                _showBorder &&
+                                (!_isLock || _icons[i].type == IconType.lock))
+                              Builder(builder: (context) {
+                                bool isLock = _icons[i].type == IconType.lock;
+                                bool isResize =
+                                    _icons[i].type == IconType.resize;
+                                LindiStickerIcon icon = _icons[i];
+                                double circleSize = icon.iconSize + 12;
+                                return PositionedAlign(
+                                  alignment: icon.alignment,
+                                  child: ScaleTransition(
                                     alignment: icon.alignment,
-                                    child: ScaleTransition(
-                                      alignment: icon.alignment,
-                                      scale: AlwaysStoppedAnimation(1 / _scale),
-                                      child: GestureDetector(
-                                        onPanUpdate: isResize ? _gestureDetectorState.onDragUpdate : null,
-                                        onPanStart: isResize ? _gestureDetectorState.onDragStart : null,
-                                        onPanEnd: isResize ? _gestureDetectorState.onDragEnd : null,
-                                        onTap: !isResize ? icon.onTap : null,
-                                        child: SizedBox(
-                                          width: circleSize,
-                                          height: circleSize,
-                                          child: CircleAvatar(
-                                              backgroundColor: icon.backgroundColor,
-                                              child: Icon(
-                                                (isLock &&
-                                                        icon.lockedIcon != null)
-                                                    ? _isLock
-                                                        ? icon.lockedIcon
-                                                        : icon.icon
-                                                    : icon.icon,
-                                                size: icon.iconSize,
-                                                color: icon.iconColor,
-                                              )),
-                                        ),
+                                    scale: AlwaysStoppedAnimation(1 / _scale),
+                                    child: GestureDetector(
+                                      onPanUpdate: isResize
+                                          ? _gestureDetectorState.onDragUpdate
+                                          : null,
+                                      onPanStart: isResize
+                                          ? _gestureDetectorState.onDragStart
+                                          : null,
+                                      onPanEnd: isResize
+                                          ? _gestureDetectorState.onDragEnd
+                                          : null,
+                                      onTap: !isResize ? icon.onTap : null,
+                                      child: SizedBox(
+                                        width: circleSize,
+                                        height: circleSize,
+                                        child: CircleAvatar(
+                                            backgroundColor:
+                                                icon.backgroundColor,
+                                            child: Icon(
+                                              (isLock &&
+                                                      icon.lockedIcon != null)
+                                                  ? _isLock
+                                                      ? icon.lockedIcon
+                                                      : icon.icon
+                                                  : icon.icon,
+                                              size: icon.iconSize,
+                                              color: icon.iconColor,
+                                            )),
                                       ),
                                     ),
-                                  );
-                                }),
-                            ],
-                            SizedBox(key: centerKey)
+                                  ),
+                                );
+                              }),
                           ],
-                        ),
+                          SizedBox(key: centerKey)
+                        ],
                       ),
-                    );
-                    return _isUpdating
-                        ? Container(
-                            color: Colors.transparent,
-                            width: double.infinity,
-                            height: double.infinity,
-                            child: transformChild)
-                        : transformChild;
-                  },
-                );
-              }
-            ),
+                    ),
+                  );
+                  return _isUpdating
+                      ? Container(
+                          color: Colors.transparent,
+                          width: double.infinity,
+                          height: double.infinity,
+                          child: transformChild)
+                      : transformChild;
+                },
+              );
+            }),
           );
         });
   }

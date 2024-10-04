@@ -43,7 +43,9 @@ class LindiStickerIcon {
       this.iconColor = Colors.black,
       this.backgroundColor = Colors.white,
       this.lockedIcon,
-      this.onTap}):
-      assert(!(lockedIcon != null && type != IconType.lock), 'Locked Icon only can be used when type is IconType.lock'),
-      assert(!(onTap != null && type == IconType.resize), 'onTap function will not be called when type is IconType.lock');
+      this.onTap})
+      : assert(!(lockedIcon != null && type != IconType.lock),
+            'Locked Icon only can be used when type is IconType.lock'),
+        assert(!(onTap != null && type == IconType.resize),
+            'onTap function will not be called when type is IconType.lock');
 }
