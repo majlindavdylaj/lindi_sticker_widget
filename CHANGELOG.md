@@ -1,4 +1,4 @@
-## 1.0.0
+## 1.0.1
 
 * **Breaking**: `LindiController` is changed. Now you can customize `LindiStickerIcon` inside controller.
 ```dart
