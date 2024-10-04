@@ -53,16 +53,11 @@ class _LindiStickerWidgetState extends State<LindiStickerWidget> {
     return RepaintBoundary(
       key: LindiStickerWidget.globalKey,
       child: Stack(
-        alignment: Alignment.center,
         children: [
           // The main child widget (content) displayed on the sticker.
           widget.child,
-          // A positioned.fill Stack to overlay draggable widgets on top of the main content.
-          Positioned.fill(
-            child: Stack(
-              children: widget.controller.widgets,
-            ),
-          )
+          //Draggable widgets on top of the main content.
+          ...widget.controller.widgets,
         ],
       ),
     );

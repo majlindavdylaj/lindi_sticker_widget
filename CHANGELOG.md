@@ -1,3 +1,42 @@
+## 1.0.0
+
+* **Breaking**: `LindiController` is changed. Now you can customize `LindiStickerIcon` inside controller.
+```dart
+LindiController controller = LindiController(
+  icons: [
+    LindiStickerIcon(
+        icon: Icons.done,
+        alignment: Alignment.topRight,
+        onTap: () {
+          controller.selectedWidget!.done();
+        }),
+    LindiStickerIcon(
+        icon: Icons.close,
+        alignment: Alignment.topLeft,
+        onTap: () {
+          controller.selectedWidget!.delete();
+        }),
+    .
+    .
+    .
+  ],
+);
+```
+* **Breaking**: `controller.addWidget` is renamed to `controller.add`
+* **Breaking**: Get index of selected widget is changed.
+```dart
+controller.onPositionChange((index) {
+  print("widgets size: ${controller.widgets.length}, current index: $index");
+});
+```
+* **Breaking**: `updateWidget` is changed.
+```dart
+controller.selectedWidget!.edit(const Text('Hello'));
+```
+* Resize widget
+* Initial widget position
+* Bug fixes
+
 ## 0.1.3
 
 * Get index of selected widget

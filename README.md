@@ -15,7 +15,7 @@
 
 ## Getting started
 
-This plugin is available on Pub: [https://pub.dev/packages/lindi_sticker_widget](https://pub.dev/packages/lindi_sticker_widget)
+[![pub package](https://img.shields.io/pub/v/lindi_sticker_widget.svg)](https://pub.dartlang.org/packages/lindi_sticker_widget)
 
 Add this to `dependencies` in your app's `pubspec.yaml`
 
@@ -29,6 +29,8 @@ Sample code to integrate can be found in [example/lib/main.dart](example/lib/mai
 
 #### LindiController
 
+Customize the controller as you like!
+
 ```dart
 LindiController controller = LindiController(
   borderColor: Colors.white,
@@ -40,10 +42,31 @@ LindiController controller = LindiController(
           controller.selectedWidget!.done();
         }),
     LindiStickerIcon(
+        icon: Icons.lock_open,
+        lockedIcon: Icons.lock,
+        alignment: Alignment.topCenter,
+        type: IconType.lock,
+        onTap: () {
+          controller.selectedWidget!.lock();
+        }),
+    LindiStickerIcon(
         icon: Icons.close,
         alignment: Alignment.topLeft,
         onTap: () {
           controller.selectedWidget!.delete();
+        }),
+    LindiStickerIcon(
+        icon: Icons.edit,
+        alignment: Alignment.centerLeft,
+        onTap: () {
+          controller.selectedWidget!
+              .edit(const Icon(Icons.star, size: 50, color: Colors.yellow));
+        }),
+    LindiStickerIcon(
+        icon: Icons.layers,
+        alignment: Alignment.centerRight,
+        onTap: () {
+          controller.selectedWidget!.stack();
         }),
     LindiStickerIcon(
         icon: Icons.flip,
@@ -52,26 +75,10 @@ LindiController controller = LindiController(
           controller.selectedWidget!.flip();
         }),
     LindiStickerIcon(
-        icon: Icons.layers,
+        icon: Icons.crop_free,
         alignment: Alignment.bottomRight,
-        onTap: () {
-          controller.selectedWidget!.stack();
-        }),
-    LindiStickerIcon(
-        icon: Icons.lock_open,
-        lockedIcon: Icons.lock,
-        isLock: true,
-        alignment: Alignment.topCenter,
-        onTap: () {
-          controller.selectedWidget!.lock();
-        }),
-    LindiStickerIcon(
-        icon: Icons.edit,
-        alignment: Alignment.bottomCenter,
-        onTap: () {
-          controller.selectedWidget!
-              .edit(const Icon(Icons.star, size: 50, color: Colors.yellow));
-        })
+        type: IconType.resize
+    ),
   ],
 );
 ```
@@ -94,6 +101,15 @@ LindiStickerWidget(
 ```dart
 controller.add(
     Text('Hello World')
+);
+```
+
+#### Add Widget with initial position to LindiStickerWidget
+
+```dart
+controller.add(
+    Text('Hello World'),
+    position: Alignment.center
 );
 ```
 

@@ -12,6 +12,8 @@ import 'package:lindi_sticker_widget/lindi_sticker_widget.dart';
 
 import 'index_stream.dart';
 
+enum IconType {lock, resize, other}
+
 /// A Dart class LindiController extending ChangeNotifier,
 /// used for managing a list of draggable widgets and their properties.
 ///
@@ -100,7 +102,7 @@ class LindiController extends ChangeNotifier {
       this.insidePadding = 13});
 
   // Method to add a widget to the list of draggable widgets.
-  add(Widget widget) {
+  add(Widget widget, {Alignment position = Alignment.center}) {
     // Generate a unique key for the widget.
     Key key = Key('lindi-${DateTime.now().millisecondsSinceEpoch}-${_nrRnd()}');
 
@@ -117,6 +119,7 @@ class LindiController extends ChangeNotifier {
         minScale: minScale,
         maxScale: maxScale,
         insidePadding: insidePadding,
+        position: _ensureWithinBounds(position),
         onBorder: (key) {
           _border(key);
         },
@@ -133,9 +136,9 @@ class LindiController extends ChangeNotifier {
   }
 
   // Adds all the widgets from the given list
-  addAll(List<Widget> widgets) {
+  addAll(List<Widget> widgets, {Alignment position = Alignment.center}) {
     for (int i = 0; i < widgets.length; i++) {
-      add(widgets[i]);
+      add(widgets[i], position: position);
     }
   }
 
@@ -231,6 +234,19 @@ class LindiController extends ChangeNotifier {
     } catch (e) {
       rethrow;
     }
+  }
+
+  Alignment _ensureWithinBounds(Alignment position){
+    double x = position.x;
+    double y = position.y;
+
+    if(position.x < -1) x = -1;
+    if(position.x > 1) x = 1;
+
+    if(position.y < -1) y = -1;
+    if(position.y > 1) y = 1;
+
+    return Alignment(x, y);
   }
 
   // Helper function to generate a random number.

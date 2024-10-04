@@ -1,6 +1,7 @@
 import 'dart:math';
 
-import 'package:flutter/widgets.dart';
+import 'package:flutter/material.dart';
+import 'package:lindi_sticker_widget/lindi_sticker_widget.dart';
 
 /// Define a callback type for LindiGestureDetector updates.
 ///
@@ -17,6 +18,8 @@ class LindiGestureDetector extends StatefulWidget {
   /// [child] widget wrapped by the gesture detector.
   ///
   final Widget child;
+
+  final GlobalKey centerKey;
 
   /// Control flags for various gesture types (translate, scale, rotate).
   ///
@@ -38,13 +41,9 @@ class LindiGestureDetector extends StatefulWidget {
   ///
   final HitTestBehavior behavior;
 
-  /// Alignment of the focal point.
-  ///
-  final Alignment? focalPointAlignment;
-
   /// Callback functions for scale start and end.
   ///
-  final VoidCallback onScaleStart;
+  final Function(bool) onScaleStart;
   final VoidCallback onScaleEnd;
 
   /// Minimum and maximum scale values.
@@ -53,20 +52,19 @@ class LindiGestureDetector extends StatefulWidget {
   final double maxScale;
 
   const LindiGestureDetector(
-      {Key? key,
+      {super.key,
+      required this.centerKey,
       required this.onUpdate,
       required this.child,
       this.shouldTranslate = true,
       this.shouldScale = true,
       this.shouldRotate = true,
       this.clipChild = true,
-      this.focalPointAlignment,
       this.behavior = HitTestBehavior.deferToChild,
       required this.onScaleStart,
       required this.onScaleEnd,
       required this.minScale,
-      required this.maxScale})
-      : super(key: key);
+      required this.maxScale});
 
   @override
   State<LindiGestureDetector> createState() => LindiGestureDetectorState();
@@ -83,6 +81,13 @@ class LindiGestureDetectorState extends State<LindiGestureDetector> {
   double recordScale = 1;
   double recordOldScale = 0;
 
+  double initialRotation = 0;
+  Offset initialFocalPoint = Offset.zero;
+  Offset widgetCenter = Offset.zero;
+  double initialDistance = 0;
+
+  Offset centerOffset = Offset.zero;
+
   @override
   Widget build(BuildContext context) {
     // Wrap the child widget in a ClipRect if clipping is enabled.
@@ -92,9 +97,9 @@ class LindiGestureDetectorState extends State<LindiGestureDetector> {
     // Create a GestureDetector to handle gestures.
     return GestureDetector(
       behavior: widget.behavior,
-      onScaleStart: onScaleStart,
-      onScaleUpdate: onScaleUpdate,
-      onScaleEnd: onScaleEnd,
+      onScaleStart: onDragStart,
+      onScaleUpdate: onDragUpdate,
+      onScaleEnd: onDragEnd,
       child: child,
     );
   }
@@ -114,22 +119,55 @@ class LindiGestureDetectorState extends State<LindiGestureDetector> {
   );
 
   // Callback when a scale gesture starts.
-  void onScaleStart(ScaleStartDetails details) {
-    widget.onScaleStart();
-    translationUpdater.value = details.focalPoint;
+  void onDragStart(details) {
+    if(details is ScaleStartDetails){
+      widget.onScaleStart(true);
+      translationUpdater.value = details.focalPoint;
+    } else if(details is DragStartDetails){
+      initialFocalPoint = details.globalPosition;
+      // Get the center of the widget
+      final renderBox = widget.centerKey.currentContext!.findRenderObject() as RenderBox;
+      widgetCenter = renderBox.localToGlobal(Offset.zero) + renderBox.size.center(Offset.zero);
+
+      // Calculate initial distance and rotation
+      initialDistance = (initialFocalPoint - widgetCenter).distance;
+      initialRotation = atan2(initialFocalPoint.dy - widgetCenter.dy, initialFocalPoint.dx - widgetCenter.dx);
+
+      centerOffset = getFocalPoint(widget.centerKey);
+    }
     recordOldScale = recordScale;
     scaleUpdater.value = 1.0;
     rotationUpdater.value = 0.0;
   }
 
   // Callback when a scale gesture ends.
-  void onScaleEnd(ScaleEndDetails details) {
-    widget.onScaleEnd();
+  void onDragEnd(details) {
+    if(details is ScaleEndDetails){
+      widget.onScaleEnd();
+    } else {
+      //Pan End
+    }
   }
 
   // Callback for handling scale updates.
-  void onScaleUpdate(ScaleUpdateDetails details) {
-    widget.onScaleStart();
+  void onDragUpdate(details) {
+    double scale = 0;
+    double rotation = 0;
+    if(details is ScaleUpdateDetails){
+      widget.onScaleStart(true);
+      scale = details.scale;
+      rotation = details.rotation;
+    } else if(details is DragUpdateDetails) {
+      widget.onScaleStart(false);
+      Offset currentFocalPoint = details.globalPosition;
+
+      double newDistance = (currentFocalPoint - widgetCenter).distance;
+      double scaleFactor = newDistance / initialDistance;
+      scale = scaleFactor;
+
+      double currentRotation = atan2(currentFocalPoint.dy - widgetCenter.dy, currentFocalPoint.dx - widgetCenter.dx);
+      rotation = currentRotation - initialRotation;
+    }
 
     // Reset transformation matrices.
     translationDeltaMatrix = Matrix4.identity();
@@ -137,31 +175,30 @@ class LindiGestureDetectorState extends State<LindiGestureDetector> {
     rotationDeltaMatrix = Matrix4.identity();
 
     // Handle translation.
-    if (widget.shouldTranslate) {
+    if (widget.shouldTranslate && details is ScaleUpdateDetails) {
       Offset translationDelta = translationUpdater.update(details.focalPoint);
       translationDeltaMatrix = _translate(translationDelta);
       matrix = translationDeltaMatrix * matrix;
     }
 
-    final focalPointAlignment = widget.focalPointAlignment;
-    final focalPoint = focalPointAlignment == null
+    final focalPoint = details is ScaleUpdateDetails
         ? details.localFocalPoint
-        : focalPointAlignment.alongSize(context.size!);
+        : centerOffset;
 
     // Handle scaling.
-    if (widget.shouldScale && details.scale != 1.0) {
-      double sc = recordOldScale * details.scale;
+    if (widget.shouldScale && scale != 1.0) {
+      double sc = recordOldScale * scale;
       if (sc > widget.minScale && sc < widget.maxScale) {
         recordScale = sc;
-        double scaleDelta = scaleUpdater.update(details.scale);
+        double scaleDelta = scaleUpdater.update(scale);
         scaleDeltaMatrix = _scale(scaleDelta, focalPoint);
         matrix = scaleDeltaMatrix * matrix;
       }
     }
 
     // Handle rotation.
-    if (widget.shouldRotate && details.rotation != 0.0) {
-      double rotationDelta = rotationUpdater.update(details.rotation);
+    if (widget.shouldRotate && rotation != 0.0) {
+      double rotationDelta = rotationUpdater.update(rotation);
       rotationDeltaMatrix = _rotate(rotationDelta, focalPoint);
       matrix = rotationDeltaMatrix * matrix;
     }
@@ -215,4 +252,19 @@ class ValueUpdater<T> {
     value = newValue;
     return updated;
   }
+}
+
+Offset getFocalPoint(GlobalKey widgetKey){
+  final RenderBox parentRenderBox =
+  LindiStickerWidget.globalKey.currentContext?.findRenderObject() as RenderBox;
+  final RenderBox childRenderBox =
+  widgetKey.currentContext?.findRenderObject() as RenderBox;
+
+  // Get global positions
+  final Offset parentGlobalPosition = parentRenderBox.localToGlobal(Offset.zero);
+  final Offset childGlobalPosition = childRenderBox.localToGlobal(Offset.zero);
+
+  // Calculate child's position relative to the parent
+  final Offset relativePosition = childGlobalPosition - parentGlobalPosition;
+  return relativePosition;
 }

@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 import 'package:lindi_sticker_widget/lindi_controller.dart';
 import 'package:lindi_sticker_widget/lindi_sticker_icon.dart';
@@ -41,6 +43,8 @@ class _MyHomePageState extends State<MyHomePage> {
     const Icon(Icons.favorite, color: Colors.red, size: 50)
   ];
 
+  Uint8List? image;
+
   @override
   void initState() {
     controller = LindiController(
@@ -53,10 +57,31 @@ class _MyHomePageState extends State<MyHomePage> {
               controller.selectedWidget!.done();
             }),
         LindiStickerIcon(
+            icon: Icons.lock_open,
+            lockedIcon: Icons.lock,
+            alignment: Alignment.topCenter,
+            type: IconType.lock,
+            onTap: () {
+              controller.selectedWidget!.lock();
+            }),
+        LindiStickerIcon(
             icon: Icons.close,
             alignment: Alignment.topLeft,
             onTap: () {
               controller.selectedWidget!.delete();
+            }),
+        LindiStickerIcon(
+            icon: Icons.edit,
+            alignment: Alignment.centerLeft,
+            onTap: () {
+              controller.selectedWidget!
+                  .edit(const Icon(Icons.star, size: 50, color: Colors.yellow));
+            }),
+        LindiStickerIcon(
+            icon: Icons.layers,
+            alignment: Alignment.centerRight,
+            onTap: () {
+              controller.selectedWidget!.stack();
             }),
         LindiStickerIcon(
             icon: Icons.flip,
@@ -65,26 +90,9 @@ class _MyHomePageState extends State<MyHomePage> {
               controller.selectedWidget!.flip();
             }),
         LindiStickerIcon(
-            icon: Icons.layers,
+            icon: Icons.crop_free,
             alignment: Alignment.bottomRight,
-            onTap: () {
-              controller.selectedWidget!.stack();
-            }),
-        LindiStickerIcon(
-            icon: Icons.lock_open,
-            lockedIcon: Icons.lock,
-            isLock: true,
-            alignment: Alignment.topCenter,
-            onTap: () {
-              controller.selectedWidget!.lock();
-            }),
-        LindiStickerIcon(
-            icon: Icons.edit,
-            alignment: Alignment.bottomCenter,
-            onTap: () {
-              controller.selectedWidget!
-                  .edit(const Icon(Icons.star, size: 50, color: Colors.yellow));
-            })
+            type: IconType.resize),
       ],
     );
 
@@ -104,28 +112,37 @@ class _MyHomePageState extends State<MyHomePage> {
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: const Text('Lindi Sticker Widget'),
       ),
-      body: LindiStickerWidget(
-        controller: controller,
-        child: SizedBox(
-            width: double.infinity,
-            height: double.infinity,
-            child: Image.network('https://picsum.photos/200/300',
-                fit: BoxFit.cover)),
+      body: Column(
+        children: [
+          Expanded(
+            child: LindiStickerWidget(
+              controller: controller,
+              child: SizedBox(
+                  width: double.infinity,
+                  height: double.infinity,
+                  child: Image.network('https://picsum.photos/200/300',
+                      fit: BoxFit.cover)),
+            ),
+          ),
+          if (image != null)
+            Expanded(
+              child: Image.memory(image!),
+            )
+        ],
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () async {
-          controller.add(
-            Container(
-              padding: const EdgeInsets.all(5),
-              decoration: const BoxDecoration(
-                  color: Colors.blue,
-                  borderRadius: BorderRadius.all(Radius.circular(20))),
-              child: const Text(
-                'This is a Text',
-                style: TextStyle(color: Colors.white),
-              ),
+          Widget widget = Container(
+            padding: const EdgeInsets.all(12),
+            decoration: const BoxDecoration(
+                color: Colors.blue,
+                borderRadius: BorderRadius.all(Radius.circular(20))),
+            child: const Text(
+              'This is a Text',
+              style: TextStyle(color: Colors.white),
             ),
           );
+          controller.add(widget, position: Alignment.center);
         },
         tooltip: 'Add',
         child: const Icon(Icons.add),
