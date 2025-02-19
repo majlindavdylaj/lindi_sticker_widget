@@ -99,10 +99,15 @@ class LindiController extends ChangeNotifier {
       this.shouldScale = true,
       this.minScale = 0.5,
       this.maxScale = 4,
-      this.insidePadding = 13});
+      this.insidePadding = 13}) {
+    onPositionChange();
+  }
 
   // Method to add a widget to the list of draggable widgets.
-  add(Widget widget, {Alignment position = Alignment.center}) {
+  add(Widget widget,
+      {@Deprecated(
+          'This property will be removed in a future release. Migrate your code accordingly.')
+      Alignment position = Alignment.center}) {
     // Generate a unique key for the widget.
     Key key = Key('lindi-${DateTime.now().millisecondsSinceEpoch}-${_nrRnd()}');
 
@@ -136,18 +141,20 @@ class LindiController extends ChangeNotifier {
   }
 
   // Adds all the widgets from the given list
-  addAll(List<Widget> widgets, {Alignment position = Alignment.center}) {
+  addAll(List<Widget> widgets) {
     for (int i = 0; i < widgets.length; i++) {
-      add(widgets[i], position: position);
+      add(widgets[i]);
     }
   }
 
   // Sets up a listener for changes in the selected widget's position.
   // The provided callback function `stream` will be called whenever the position changes.
-  onPositionChange(Function(int) stream) {
+  onPositionChange([Function(int)? stream]) {
     _selectedIndex.stream.listen((int index) {
       _currentIndex = index;
-      stream(_currentIndex);
+      if (stream != null) {
+        stream(_currentIndex);
+      }
     });
   }
 

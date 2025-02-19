@@ -57,7 +57,12 @@ class _LindiStickerWidgetState extends State<LindiStickerWidget> {
           // The main child widget (content) displayed on the sticker.
           widget.child,
           //Draggable widgets on top of the main content.
-          ...widget.controller.widgets,
+          Positioned.fill(
+            child: Stack(
+              fit: StackFit.expand,
+              children: widget.controller.widgets,
+            ),
+          )
         ],
       ),
     );

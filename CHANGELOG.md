@@ -1,3 +1,10 @@
+## 1.0.2
+
+* Initial widget position is deprecated
+* Fixed when `selectedWidget` returns null
+* Fixed when stickers goes outside of child (background)
+* Update project
+
 ## 1.0.1
 
 * **Breaking**: `LindiController` is changed. Now you can customize `LindiStickerIcon` inside controller.

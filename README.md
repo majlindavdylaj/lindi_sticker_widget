@@ -104,15 +104,6 @@ controller.add(
 );
 ```
 
-#### Add Widget with initial position to LindiStickerWidget
-
-```dart
-controller.add(
-    Text('Hello World'),
-    position: Alignment.center
-);
-```
-
 #### Get index of selected widget
 
 ```dart
@@ -127,9 +118,10 @@ controller.onPositionChange((index) {
 Uint8List? image = await controller.saveAsUint8List();
 ```
 
-## Screenshot
+## Screenshots
 
-![Demo](/example/assets/Screenshot.png)
+![Demo](/example/assets/Screenshot1.png)
+![Demo](/example/assets/Screenshot2.png)
 
 ***
 

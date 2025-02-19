@@ -130,22 +130,38 @@ class _MyHomePageState extends State<MyHomePage> {
             )
         ],
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () async {
-          Widget widget = Container(
-            padding: const EdgeInsets.all(12),
-            decoration: const BoxDecoration(
-                color: Colors.blue,
-                borderRadius: BorderRadius.all(Radius.circular(20))),
-            child: const Text(
-              'This is a Text',
-              style: TextStyle(color: Colors.white),
-            ),
-          );
-          controller.add(widget, position: Alignment.center);
-        },
-        tooltip: 'Add',
-        child: const Icon(Icons.add),
+      floatingActionButton: Column(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          FloatingActionButton(
+            onPressed: () async {
+              Widget widget = Container(
+                padding: const EdgeInsets.all(12),
+                decoration: const BoxDecoration(
+                    color: Colors.blue,
+                    borderRadius: BorderRadius.all(Radius.circular(20))),
+                child: const Text(
+                  'This is a Text',
+                  style: TextStyle(color: Colors.white),
+                ),
+              );
+              controller.add(widget);
+            },
+            tooltip: 'Add',
+            child: const Icon(Icons.add),
+          ),
+          const SizedBox(height: 20),
+          FloatingActionButton(
+            onPressed: () async {
+              Uint8List? img = await controller.saveAsUint8List();
+              setState(() {
+                image = img;
+              });
+            },
+            tooltip: 'Add',
+            child: const Icon(Icons.camera_alt_outlined),
+          ),
+        ],
       ),
     );
   }

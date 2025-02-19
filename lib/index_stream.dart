@@ -3,7 +3,7 @@ import 'dart:async';
 /// A class that manages a stream of values, allowing updates and providing access to the current value.
 class IndexStream<T> {
   // Private StreamController used to manage and broadcast stream events.
-  final StreamController<T> _stream = StreamController<T>();
+  final StreamController<T> _stream = StreamController<T>.broadcast();
 
   // The sink of the StreamController, used to add new values to the stream.
   Sink<T> get _input => _stream.sink;
