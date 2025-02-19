@@ -120,8 +120,10 @@ Uint8List? image = await controller.saveAsUint8List();
 
 ## Screenshots
 
-![Demo](/example/assets/Screenshot1.png)
-![Demo](/example/assets/Screenshot2.png)
+<p float="left">
+  <img src="/example/assets/Screenshot1.png" width="400" />
+  <img src="/example/assets/Screenshot2.png" width="400" /> 
+</p>
 
 ***
 
