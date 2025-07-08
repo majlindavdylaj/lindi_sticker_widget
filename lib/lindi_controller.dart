@@ -104,10 +104,7 @@ class LindiController extends ChangeNotifier {
   }
 
   // Method to add a widget to the list of draggable widgets.
-  add(Widget widget,
-      {@Deprecated(
-          'This property will be removed in a future release. Migrate your code accordingly.')
-      Alignment position = Alignment.center}) {
+  add(Widget widget) {
     // Generate a unique key for the widget.
     Key key = Key('lindi-${DateTime.now().millisecondsSinceEpoch}-${_nrRnd()}');
 
@@ -124,7 +121,7 @@ class LindiController extends ChangeNotifier {
         minScale: minScale,
         maxScale: maxScale,
         insidePadding: insidePadding,
-        position: _ensureWithinBounds(position),
+        position: _ensureWithinBounds(Alignment.center),
         onBorder: (key) {
           _border(key);
         },
@@ -220,23 +217,20 @@ class LindiController extends ChangeNotifier {
   }
 
   // Method to save the widget layout as a Uint8List image.
-  Future<Uint8List?> saveAsUint8List() async {
+  Future<Uint8List?> saveAsUint8List({double pixelRatio = 2}) async {
     // Clear all borders before capturing the image.
     clearAllBorders();
     try {
       Uint8List? pngBytes;
-      double pixelRatio = 2;
-      await Future.delayed(const Duration(milliseconds: 700))
-          .then((value) async {
-        // Capture the image of the widget.
-        RenderRepaintBoundary boundary =
-            LindiStickerWidget.globalKey.currentContext?.findRenderObject()
-                as RenderRepaintBoundary;
-        ui.Image image = await boundary.toImage(pixelRatio: pixelRatio);
-        ByteData? byteData =
-            await image.toByteData(format: ui.ImageByteFormat.png);
-        pngBytes = byteData?.buffer.asUint8List();
-      });
+      await WidgetsBinding.instance.endOfFrame;
+      // Capture the image of the widget.
+      RenderRepaintBoundary boundary =
+          LindiStickerWidget.globalKey.currentContext?.findRenderObject()
+              as RenderRepaintBoundary;
+      ui.Image image = await boundary.toImage(pixelRatio: pixelRatio);
+      ByteData? byteData =
+          await image.toByteData(format: ui.ImageByteFormat.png);
+      pngBytes = byteData?.buffer.asUint8List();
       return pngBytes;
     } catch (e) {
       rethrow;

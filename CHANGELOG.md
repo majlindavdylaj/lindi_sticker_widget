@@ -1,3 +1,9 @@
+## 1.0.4
+
+* Added `pixelRatio` to `saveAsUint8List` to improve image quality
+* Removed deprecated initial position parameter
+* Update project to latest Flutter version
+
 ## 1.0.3
 
 * Initial widget position is deprecated
