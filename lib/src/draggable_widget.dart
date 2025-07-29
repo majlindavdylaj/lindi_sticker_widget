@@ -62,6 +62,7 @@ class DraggableWidget extends StatelessWidget {
   /// Callback functions for various widget interactions.
   ///
   late Function(Key?) _onBorder;
+  late Function() _onDone;
   late Function(Key?) _onDelete;
   late Function(Key?) _onLayer;
 
@@ -90,6 +91,7 @@ class DraggableWidget extends StatelessWidget {
       required maxScale,
       required onBorder,
       required onDelete,
+      required onDone,
       required onLayer,
       required insidePadding}) {
     _icons = icons;
@@ -105,6 +107,7 @@ class DraggableWidget extends StatelessWidget {
     _maxScale = maxScale;
     _onBorder = onBorder;
     _onDelete = onDelete;
+    _onDone = onDone;
     _onLayer = onLayer;
     _insidePadding = insidePadding;
 
@@ -137,6 +140,7 @@ class DraggableWidget extends StatelessWidget {
   // Method to mark the widget as "done" and hide its border.
   done() {
     _showBorder = false;
+    _onDone();
     _updater.value = !_updater.value;
   }
 

@@ -97,7 +97,7 @@ class LindiController extends ChangeNotifier {
   final IndexStream<int> _selectedIndex = IndexStream<int>();
   int _currentIndex = -1;
 
-  bool _deleted = false;
+  bool _dismissed = false;
 
   /// Constructor to initialize properties with default values.
   ///
@@ -139,6 +139,10 @@ class LindiController extends ChangeNotifier {
         position: _ensureWithinBounds(Alignment.center),
         onBorder: (key) {
           _border(key);
+        },
+        onDone: () {
+          _dismissed = true;
+          _selectedIndex.update(-1); // Reset selected index.
         },
         onDelete: (key) {
           _delete(key);
@@ -183,6 +187,10 @@ class LindiController extends ChangeNotifier {
   // Method to clear borders of all widgets.
   clearAllBorders() {
     _border(const Key('-1'));
+    _dismissed = true;
+    if (_selectedIndex.current != null && _selectedIndex.current! != -1) {
+      _selectedIndex.update(-1); // Reset selected index.
+    }
   }
 
   close() {
@@ -195,9 +203,9 @@ class LindiController extends ChangeNotifier {
       if (widgets[i].key == key) {
         widgets[i].showBorder(true);
         if (_selectedIndex.current == null ||
-            _deleted ||
+            _dismissed ||
             widgets[_selectedIndex.current!].key != widgets[i].key) {
-          if (_deleted) _deleted = false;
+          if (_dismissed) _dismissed = false;
           _selectedIndex.update(i);
         }
       } else {
@@ -212,7 +220,7 @@ class LindiController extends ChangeNotifier {
     widgets.removeWhere((element) {
       return element.key! == key;
     });
-    _deleted = true;
+    _dismissed = true;
     //If widget is deleted, selected index is -1
     _selectedIndex.update(-1);
     notifyListeners();
