@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:lindi_sticker_widget/lindi_controller.dart';
+import 'package:lindi_sticker_widget/src/lindi_controller.dart';
 
 class LindiStickerIcon {
   // The main icon associated with item.

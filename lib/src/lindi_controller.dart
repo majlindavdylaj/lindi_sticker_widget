@@ -4,11 +4,11 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:lindi_sticker_widget/draggable_widget.dart';
-import 'package:lindi_sticker_widget/lindi_sticker_icon.dart';
+import 'package:lindi_sticker_widget/src/draggable_widget.dart';
+import 'package:lindi_sticker_widget/src/lindi_sticker_icon.dart';
 import 'dart:ui' as ui;
 
-import 'package:lindi_sticker_widget/lindi_sticker_widget.dart';
+import 'package:lindi_sticker_widget/src/lindi_sticker_widget.dart';
 
 import 'index_stream.dart';
 
@@ -62,6 +62,18 @@ class LindiController extends ChangeNotifier {
   ///
   bool shouldScale;
 
+  /// Should the widget dismiss on tap outside
+  ///
+  /// Defaults to true
+  ///
+  bool dismissOnTapOutside;
+
+  /// Should the widget select on tap
+  ///
+  /// Defaults to true
+  ///
+  bool tapToSelect;
+
   /// Widget minimum scale
   ///
   /// Defaults 0.5
@@ -85,7 +97,7 @@ class LindiController extends ChangeNotifier {
   final IndexStream<int> _selectedIndex = IndexStream<int>();
   int _currentIndex = -1;
 
-  bool deleted = false;
+  bool _deleted = false;
 
   /// Constructor to initialize properties with default values.
   ///
@@ -97,6 +109,8 @@ class LindiController extends ChangeNotifier {
       this.shouldMove = true,
       this.shouldRotate = true,
       this.shouldScale = true,
+      this.dismissOnTapOutside = true,
+      this.tapToSelect = true,
       this.minScale = 0.5,
       this.maxScale = 4,
       this.insidePadding = 13}) {
@@ -118,6 +132,7 @@ class LindiController extends ChangeNotifier {
         shouldMove: shouldMove,
         shouldRotate: shouldRotate,
         shouldScale: shouldScale,
+        tapToSelect: tapToSelect,
         minScale: minScale,
         maxScale: maxScale,
         insidePadding: insidePadding,
@@ -180,9 +195,9 @@ class LindiController extends ChangeNotifier {
       if (widgets[i].key == key) {
         widgets[i].showBorder(true);
         if (_selectedIndex.current == null ||
-            deleted ||
+            _deleted ||
             widgets[_selectedIndex.current!].key != widgets[i].key) {
-          if (deleted) deleted = false;
+          if (_deleted) _deleted = false;
           _selectedIndex.update(i);
         }
       } else {
@@ -197,7 +212,7 @@ class LindiController extends ChangeNotifier {
     widgets.removeWhere((element) {
       return element.key! == key;
     });
-    deleted = true;
+    _deleted = true;
     //If widget is deleted, selected index is -1
     _selectedIndex.update(-1);
     notifyListeners();

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:lindi_sticker_widget/lindi_controller.dart';
-import 'package:lindi_sticker_widget/lindi_gesture_detector.dart';
-import 'package:lindi_sticker_widget/lindi_sticker_icon.dart';
-import 'package:lindi_sticker_widget/positioned_align.dart';
+import 'package:lindi_sticker_widget/src/lindi_controller.dart';
+import 'package:lindi_sticker_widget/src/lindi_gesture_detector.dart';
+import 'package:lindi_sticker_widget/src/lindi_sticker_icon.dart';
+import 'package:lindi_sticker_widget/src/positioned_align.dart';
 
 /// A Flutter widget class DraggableWidget for displaying and managing draggable stickers.
 ///
@@ -20,6 +20,7 @@ class DraggableWidget extends StatelessWidget {
   late bool _shouldMove;
   late bool _shouldRotate;
   late bool _shouldScale;
+  late bool _tapToSelect;
   late double _minScale;
   late double _maxScale;
   late double _insidePadding;
@@ -84,6 +85,7 @@ class DraggableWidget extends StatelessWidget {
       required shouldMove,
       required shouldRotate,
       required shouldScale,
+      required tapToSelect,
       required minScale,
       required maxScale,
       required onBorder,
@@ -98,6 +100,7 @@ class DraggableWidget extends StatelessWidget {
     _shouldMove = shouldMove;
     _shouldRotate = shouldRotate;
     _shouldScale = shouldScale;
+    _tapToSelect = tapToSelect;
     _minScale = minScale;
     _maxScale = maxScale;
     _onBorder = onBorder;
@@ -168,14 +171,19 @@ class DraggableWidget extends StatelessWidget {
           // LindiGestureDetector for handling scaling, rotating, and translating the widget.
           return LindiGestureDetector(
             centerKey: centerKey,
-            shouldTranslate: _shouldMove,
-            shouldRotate: _shouldRotate,
-            shouldScale: _shouldScale,
+            shouldTranslate: _showBorder ? _shouldMove : false,
+            shouldRotate: _showBorder ? _shouldRotate : false,
+            shouldScale: _showBorder ? _shouldScale : false,
             minScale: _minScale,
             maxScale: _maxScale,
+            onTap: _tapToSelect && !_showBorder
+                ? () {
+                    _onBorder(key);
+                  }
+                : null,
             onScaleStart: (bool update) {
               if (update) _isUpdating = true;
-              _onBorder(key);
+              if (_showBorder || !_tapToSelect) _onBorder(key);
             },
             onScaleEnd: () {
               _isUpdating = false;

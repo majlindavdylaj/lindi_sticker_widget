@@ -1,7 +1,7 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:lindi_sticker_widget/lindi_sticker_widget.dart';
+import 'package:lindi_sticker_widget/src/lindi_sticker_widget.dart';
 
 /// Define a callback type for LindiGestureDetector updates.
 ///
@@ -45,6 +45,7 @@ class LindiGestureDetector extends StatefulWidget {
   ///
   final Function(bool) onScaleStart;
   final VoidCallback onScaleEnd;
+  final VoidCallback? onTap;
 
   /// Minimum and maximum scale values.
   ///
@@ -61,6 +62,7 @@ class LindiGestureDetector extends StatefulWidget {
       this.shouldRotate = true,
       this.clipChild = true,
       this.behavior = HitTestBehavior.deferToChild,
+      required this.onTap,
       required this.onScaleStart,
       required this.onScaleEnd,
       required this.minScale,
@@ -96,6 +98,7 @@ class LindiGestureDetectorState extends State<LindiGestureDetector> {
 
     // Create a GestureDetector to handle gestures.
     return GestureDetector(
+      onTap: widget.onTap,
       behavior: widget.behavior,
       onScaleStart: onDragStart,
       onScaleUpdate: onDragUpdate,
