@@ -1,3 +1,8 @@
+## 1.1.0
+
+* Added `dismissOnTapOutside` and `tapToSelect` properties to `LindiController` for more flexible sticker interaction behavior
+* Bug fixes
+
 ## 1.0.4
 
 * Added `pixelRatio` to `saveAsUint8List` to improve image quality
